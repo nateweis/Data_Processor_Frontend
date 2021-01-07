@@ -7,8 +7,9 @@ import XLSX from 'xlsx'
 class DragBox extends Component {
 
     handleDrop = (file) => {
+        console.log(file)
         let reader = new FileReader()
-        reader.readAsBinaryString(file)
+        reader.readAsBinaryString(file[0])
         reader.onload = (e) => {
             let data = e.target.result
             let wb = XLSX.read(data, {type: "binary"})
@@ -16,6 +17,8 @@ class DragBox extends Component {
                 let rowObj = XLSX.utils.sheet_to_json(wb.Sheets[sheet])
                 console.log(rowObj)
             })
+
+            console.log(wb)
         }
     }
 
@@ -23,7 +26,9 @@ class DragBox extends Component {
     render() {
         return (
             <>
-                <input type="file"  onChange={(e)=>this.handleDrop(e.target.files[0])}/> 
+                <input type="file"  onChange={(e)=>this.handleDrop(e.target.files)}/> 
+
+                <div className='pic-box' style={style.dragbox} onDrop={(e)=>this.handleDrop(e.dataTransfer.files)}></div>
             </>
         )
     }
