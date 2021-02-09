@@ -5,21 +5,34 @@ import XLSX from 'xlsx'
 
 
 class DragBox extends Component {
+    constructor(props){
+        super(props)
+        this.state={}
+    }
 
     handleDrop = (file) => {
-        console.log(file)
+        // console.log(file)
         let reader = new FileReader()
         reader.readAsBinaryString(file[0])
         reader.onload = (e) => {
             let data = e.target.result
             let wb = XLSX.read(data, {type: "binary"})
             wb.SheetNames.forEach(sheet => {
-                let rowObj = XLSX.utils.sheet_to_json(wb.Sheets[sheet])
-                console.log(rowObj)
+                let rowObj = XLSX.utils.sheet_to_row_object_array(wb.Sheets[sheet])
+                // console.log(rowObj)
+                this.setState({exslRows: rowObj})
+                this.processRow(rowObj)
             })
 
-            console.log(wb)
+            // console.log(wb)
         }
+    }
+
+    processRow = (rows) => {
+        rows.forEach(r => {
+            console.log(r)
+        })
+        
     }
 
 

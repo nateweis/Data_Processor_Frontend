@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 
 
 import DragBox from './components/DragBox'
+import PDFGenerator from './components/PDFGenerator'
 
 
 class App extends Component{
@@ -24,6 +25,7 @@ class App extends Component{
     return(
       <>
         <DragBox />
+        <PDFGenerator />
       </>
     )
   }
