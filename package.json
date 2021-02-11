@@ -1,0 +1,24 @@
+{
+  "name": "data_processor_frontend",
+  "version": "1.0.0",
+  "description": "for automating data processing process ",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nateweis/Data_Processor_Frontend.git"
+  },
+  "author": "Nate Weiss",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nateweis/Data_Processor_Frontend/issues"
+  },
+  "homepage": "https://github.com/nateweis/Data_Processor_Frontend#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
+  }
+}
