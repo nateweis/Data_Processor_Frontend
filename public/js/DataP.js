@@ -10,30 +10,38 @@ export const dp = ['$http', function($http){
     this.processAlarms = function(rows){
         let rawKeys = Object.keys(rows[0]);
         let indexHolder = [];
-        for (let i = 0; i < rawKeys.length; i++) {
+
+        //*** Making an Array of Relvent Variables ***
+        for (let i = 0; i < rawKeys.length; i++) { // finding the keys we want 
             const sk1 = rawKeys[i].split("\\")
             const sk2 = sk1[sk1.length - 1].split(" ")
-            if(sk2[sk2.length - 1] === "Fault" || sk2[sk2.length - 1] === "Alarm" || sk2[sk2.length - 1] === "Start") {
+            if(sk2[sk2.length - 1] === "Fault" || sk2[sk2.length - 1] === "Alarm" || sk2[sk2.length - 1] === "Start") { //making an obj to push into our array 
                 const obj = {
                     type: sk1[sk1.length - 1],
                     index: i
                 }
-                if(obj.type === "Fault") obj.type = sk1[sk1.length - 2] + " Fault"
-                const sk3 = sk1[sk1.length - 2].split(" ")
-                if(sk3[1] === "1" || sk3[1] === "2") obj.pump = parseInt(sk3[1])
+                const sk3 = sk1[sk1.length - 2]
+                if(sk3.split(" ")[1] === "1" || sk3.split(" ")[1] === "2") obj.type = sk3 + " "+ sk1[sk1.length - 1]
                 
-
-                indexHolder.push(obj)
+                indexHolder.push(obj)//push into the array 
             }
         }
 
-        console.log(indexHolder)
+        // *** Using the Array of relevent Variables to make an obj of counted faults ****
 
-
-        rows.forEach(row => {
-            // console.log(row)
+        const countObj = {} // an object to hold the number count 
+        indexHolder.forEach(v => { // looping throught both the the relevent indexes and the actual excel rows 
+            countObj[v.type] = 0
+            rows.forEach(row => {
+                if(parseInt(row[rawKeys[v.index]]) === 1) countObj[v.type] += 1
+            });
         });
+
+        console.log(countObj)
+        
     }
+    
+    // ****************************** END OF PROCESS ALARMS FUNCTION **************************************** ///
 
     this.processRows = function(rows){
         ctrl.processAlarms(rows)
