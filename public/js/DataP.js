@@ -83,16 +83,18 @@ export const dp = ['$http', function($http){
         // *** Using the Array of relevent Variables to make an obj of runtimeinfo ****
         const runtimeObj = {} // an object to hold the number runtime info
         indexHolder.forEach(v => { // looping throught both the the relevent indexes and the actual excel rows 
-            runtimeObj[v.type] = 0
+            const starts = v.type === "Time" ? v.type : v.type += " Starts"
+            runtimeObj[starts] = 0
             for (let i = 0; i < rows.length; i++) {
-                if(parseInt(rows[i][rawKeys[v.index]]) === 1){ //getting the pump 1 and 2 starts and stops 
-                    if(i === 0) runtimeObj[v.type] += 1
-                    else if(parseInt(rows[i-1][rawKeys[v.index]]) !== 1) runtimeObj[v.type] += 1
+                if(parseInt(rows[i][rawKeys[v.index]]) === 1 && v.type !== "Time"){ //getting the pump 1 and 2 starts and stops 
+                    if(i === 0) runtimeObj[starts] += 1
+                    else if(parseInt(rows[i-1][rawKeys[v.index]]) !== 1) runtimeObj[starts] += 1
                 }
             }
             
         });
         
+        delete runtimeObj["Time"]
         console.log(runtimeObj)
         // console.log(ctrl.finalProcessedObject)
     }
