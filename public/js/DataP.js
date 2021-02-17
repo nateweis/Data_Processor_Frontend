@@ -83,12 +83,37 @@ export const dp = ['$http', function($http){
         // *** Using the Array of relevent Variables to make an obj of runtimeinfo ****
         const runtimeObj = {} // an object to hold the number runtime info
         indexHolder.forEach(v => { // looping throught both the the relevent indexes and the actual excel rows 
-            const starts = v.type === "Time" ? v.type : v.type += " Starts"
+            let pumpNumber = v.type
+            const starts = pumpNumber === "Time" ? pumpNumber : pumpNumber += " Starts"
+            pumpNumber = v.type
+            const runTime = pumpNumber === "Time" ? pumpNumber : pumpNumber += " Time"
+            
             runtimeObj[starts] = 0
+            runtimeObj[runTime] = [0, 0, 0]
             for (let i = 0; i < rows.length; i++) {
-                if(parseInt(rows[i][rawKeys[v.index]]) === 1 && v.type !== "Time"){ //getting the pump 1 and 2 starts and stops 
-                    if(i === 0) runtimeObj[starts] += 1
-                    else if(parseInt(rows[i-1][rawKeys[v.index]]) !== 1) runtimeObj[starts] += 1
+                if(parseInt(rows[i][rawKeys[v.index]]) === 1 && v.type !== "Time"){  
+                    if(i === 0){
+                        runtimeObj[starts] += 1 // adding to pump 1/2 starts
+                    }
+                    else if(parseInt(rows[i-1][rawKeys[v.index]]) !== 1){
+                        runtimeObj[starts] += 1 // adding to pump 1/2 starts
+
+                        if(rows[i+1] && parseInt(rows[i+1][rawKeys[v.index]]) === 0){ //seeing how long pump was on for
+                            const currentTime = rows[i]["Time"].split(":") //getting the times for current on and next time off
+                            const nextTime = rows[i + 1]["Time"].split(":")
+                            for(let j=0; j < currentTime.length; j++){ //subtracting the next time off from time on to see how long it was on for 
+                                let sum
+                                let num1 = parseInt(currentTime[j])
+                                let num2 = parseInt(nextTime[j])
+                                if(num2 >= num1) sum = num2 - num1
+                                else j > 0 ? sum = (60 - num1) + num2 : sum = (24 - num1) + num2
+                                runtimeObj[runTime][j] += sum
+                            }
+                        }
+                        
+
+                       
+                    }
                 }
             }
             
