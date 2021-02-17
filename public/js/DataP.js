@@ -1,7 +1,16 @@
 export const dp = ['$http', function($http){
     const ctrl = this; 
     
-    this.newFile = {}
+    this.finalProcessedObject = {}
+
+    // extender for the excel file processing 
+    this.excelFileProcessing = function(excelFile){
+        ctrl.finalProcessedObject = {}
+        const rows = excelFile
+            
+        ctrl.processAlarms(rows)
+        ctrl.processRuntimes(rows)
+    }
 
     // ================================== //
     //     Procssing The Alarm Data       //
@@ -32,20 +41,31 @@ export const dp = ['$http', function($http){
         const countObj = {} // an object to hold the number count 
         indexHolder.forEach(v => { // looping throught both the the relevent indexes and the actual excel rows 
             countObj[v.type] = 0
-            rows.forEach(row => {
-                if(parseInt(row[rawKeys[v.index]]) === 1) countObj[v.type] += 1
-            });
+            for (let i = 0; i < rows.length; i++) {
+                if(parseInt(rows[i][rawKeys[v.index]]) === 1){
+                    if(i === 0) countObj[v.type] += 1
+                    else if(parseInt(rows[i-1][rawKeys[v.index]]) !== 1) countObj[v.type] += 1
+                }
+            }
+             // 
         });
 
-        console.log(countObj)
+        ctrl.finalProcessedObject = {...ctrl.finalProcessedObject, ...countObj}
         
     }
     
     // ****************************** END OF PROCESS ALARMS FUNCTION **************************************** ///
 
-    this.processRows = function(rows){
-        ctrl.processAlarms(rows)
+
+
+    // ================================== //
+    //    Procssing The Runtime Data      //
+    // ================================== // 
+    this.processRuntimes = (rows) => {
+        console.log(ctrl.finalProcessedObject)
     }
+
+    // ****************************** END OF PROCESS RUNTIME FUNCTION **************************************** ///
 
     this.showFile = function(){
         const myFile = document.getElementById("fileBtn");
@@ -59,7 +79,7 @@ export const dp = ['$http', function($http){
             wb.SheetNames.forEach(sheet => {
                 let rowObj = XLSX.utils.sheet_to_row_object_array(wb.Sheets[sheet])
                 // console.log(rowObj)
-                ctrl.processRows(rowObj)
+                ctrl.excelFileProcessing(rowObj)
                 
             })
 
