@@ -17,12 +17,13 @@ export const dp = ['$http', function($http){
     // ================================== // 
 
     this.processAlarms = function(rows){
-        let rawKeys = Object.keys(rows[0]);
+        const k = Object.keys(rows[0]).length >= Object.keys(rows[rows.length -1]).length ? 0 : rows.length -1 //in case the first cell is missing keys
+        let rawKeys = Object.keys(rows[k]);
         let indexHolder = [];
-
+        
         //*** Making an Array of Relvent Variables ***
         for (let i = 0; i < rawKeys.length; i++) { // finding the keys we want 
-            const sk1 = rawKeys[i].split("\\")
+            const sk1 = rawKeys[i].split("\\") // sK stands for split keys 
             const sk2 = sk1[sk1.length - 1].split(" ")
             if(sk2[sk2.length - 1] === "Fault" || sk2[sk2.length - 1] === "Alarm" || sk2[sk2.length - 1] === "Start") { //making an obj to push into our array 
                 const obj = {
@@ -62,7 +63,25 @@ export const dp = ['$http', function($http){
     //    Procssing The Runtime Data      //
     // ================================== // 
     this.processRuntimes = (rows) => {
-        console.log(ctrl.finalProcessedObject)
+        const k = Object.keys(rows[0]).length >= Object.keys(rows[rows.length -1]).length ? 0 : rows.length -1 //in case the first cell is missing keys
+        let rawKeys = Object.keys(rows[k]);
+        let indexHolder = [];
+        
+        //*** Making an Array of Relvent Variables ***
+        for (let i = 0; i < rawKeys.length; i++) {
+            const sK = rawKeys[i].split("\\") // sK stands for split keys 
+            // console.log(sK[sK.length - 1])
+            if(sK[sK.length - 1] === "Time" || sK[sK.length - 1] === "Run" || sK[sK.length - 1] === "Running") { //making an obj to push into our array 
+                const obj = {
+                    index: i
+                }
+                obj.type = sK[sK.length - 1] === "Time" ? sK[sK.length - 1] : sK[sK.length - 2] + " "+ sK[sK.length - 1]
+                indexHolder.push(obj)
+            }
+        }
+        
+        console.log(indexHolder)
+        // console.log(ctrl.finalProcessedObject)
     }
 
     // ****************************** END OF PROCESS RUNTIME FUNCTION **************************************** ///
