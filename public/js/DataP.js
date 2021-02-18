@@ -171,13 +171,16 @@ export const dp = ['$http', function($http){
                 const avgSec = runtimeObj[runTime] / runtimeObj[starts] //getting the avarage runtime 
                 runtimeObj[rtTotal] = convertFromSecs(runtimeObj[runTime])
                 runtimeObj[rtAvrg] = convertFromSecs(avgSec)
+
+                delete runtimeObj[runTime]
             }
 
         });
 
         delete runtimeObj["Time"]
-        console.log(runtimeObj)
-        // console.log(ctrl.finalProcessedObject)
+        // console.log(runtimeObj)
+        ctrl.finalProcessedObject = {...ctrl.finalProcessedObject, ...runtimeObj}
+        console.log(ctrl.finalProcessedObject)
     }
 
     // ****************************** END OF PROCESS RUNTIME FUNCTION **************************************** ///
