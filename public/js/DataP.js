@@ -1,7 +1,11 @@
-export const dp = ['$http', function($http){
+export const dp = ['$http', '$scope', function($http, $scope){
     const ctrl = this; 
     
     this.finalProcessedObject = {}
+    $scope.pumps = {
+        types: "Sewer"
+    };
+   
 
 
 
@@ -10,7 +14,7 @@ export const dp = ['$http', function($http){
     // ================================== //
     //          Helper Functions          //
     // ================================== // 
-
+    // Converst secondst to time in an obj
     const convertFromSecs = (time) => {
         let sec = 0, min= 0, hr = 0
         for(let i = 0; i < time; i++){
@@ -25,6 +29,11 @@ export const dp = ['$http', function($http){
             }
         }
         return {h: hr, m: min, s: sec}
+    }
+
+    // lets the next button be available 
+    this.didStep = () => {
+        console.log($scope.pumps.types)
     }
 
     // ****************************** END OF HELPER fUNCTIONS FUNCTION **************************************** ///
@@ -147,23 +156,30 @@ export const dp = ['$http', function($http){
                     else if(parseInt(rows[i-1][rawKeys[v.index]]) !== 1){ //if the row before does not equal 1 
                         runtimeObj[starts] += 1 // adding to pump 1/2 starts
 
-                        if(rows[i+1] && parseInt(rows[i+1][rawKeys[v.index]]) === 0){ //if the next row is a 0 see how long pump was on for
-                            const currentTime = rows[i]["Time"].split(":") //getting the times for current on and next time off
-                            const nextTime = rows[i + 1]["Time"].split(":")
-                            const toSecondsAr = [3600, 60, 1]
+                        const toSecondsAr = [3600, 60, 1]
+                        const currentTime = rows[i]["Time"].split(":") //getting the times for current on and next time off
+
+                        let nextTime
+                        for(let j = i; j < rows.length; j++){
+                            if(rows[j] && parseInt(rows[j][rawKeys[v.index]]) === 0){
+                                nextTime = rows[j]["Time"].split(":")
+                                break;
+                            }
+                        }
+
+                        if(nextTime){
                             let num1 = 0, num2 = 0
 
                             for(let j=0; j < currentTime.length; j++){ //converting the times to seconds 
                                 num1 += parseInt(currentTime[j]) * toSecondsAr[j]
                                 num2 += parseInt(nextTime[j]) * toSecondsAr[j]
                             }
-
+                            
                             const sum = num2 >= num1 ? num2 - num1 : (86400 - num1) + num2 //subtracting the next time off from time on to see how long it was on for 
                             runtimeObj[runTime] += sum //getting the raw time data 
-                            
                         }
                             
-                    }
+                    } //end of else if 
                 }
             }
             
