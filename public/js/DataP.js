@@ -299,7 +299,34 @@ export const dp = ['$http', '$scope', function($http, $scope){
     // ================================== //    
 
     this.processTemp = (rows) => {
-        console.log("Temp")
+        const k = Object.keys(rows[0]).length >= Object.keys(rows[rows.length -1]).length ? 0 : rows.length -1 //in case the first cell is missing keys
+        let rawKeys = Object.keys(rows[k]);
+        let tempIndex = 0;
+        let totalTemp = 0;
+        const tempObj = {
+            avgTemp:0,
+            minTemp: 0,
+            maxTemp:0
+        }
+
+        for (let i = 0; i < rawKeys.length; i++) {
+            const sK = rawKeys[i].split("\\") // sK stands for split keys 
+            if(sK[sK.length - 1] === "Temperature") tempIndex = i
+        }
+
+        let min = parseInt(rows[0][rawKeys[tempIndex]]), max = parseInt(rows[0][rawKeys[tempIndex]])
+        for(let i = 0; i < rows.length; i++){
+            totalTemp += parseInt(rows[i][rawKeys[tempIndex]])
+            if(parseInt(rows[i][rawKeys[tempIndex]]) > max) max = parseInt(rows[i][rawKeys[tempIndex]])
+            if(parseInt(rows[i][rawKeys[tempIndex]]) < min) min = parseInt(rows[i][rawKeys[tempIndex]])
+        }
+        
+        tempObj.avgTemp = parseInt(totalTemp / rows.length)
+        tempObj.minTemp = min
+        tempObj.maxTemp = max
+        // console.log(tempObj)
+        ctrl.finalProcessedObject = {...ctrl.finalProcessedObject, ...tempObj}
+        
     }
 
     // ****************************** END OF PROCESS TEMPURATURE FUNCTION **************************************** ///
