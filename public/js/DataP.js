@@ -3,7 +3,7 @@ export const dp = ['$http', '$scope', function($http, $scope){
     
     this.finalProcessedObject = {}
     $scope.pumps = {
-        types: "Booster"
+        types: "other"
     };
    
 
@@ -33,7 +33,7 @@ export const dp = ['$http', '$scope', function($http, $scope){
 
     // lets the next button be available 
     this.didStep = () => {
-        console.log($scope.pumps.types)
+        // console.log($scope.pumps.types)
     }
 
     // ****************************** END OF HELPER fUNCTIONS FUNCTION **************************************** ///
@@ -42,10 +42,27 @@ export const dp = ['$http', '$scope', function($http, $scope){
     this.excelFileProcessing = function(excelFile){
         ctrl.finalProcessedObject = {}
         const rows = excelFile
+
+        const k = Object.keys(rows[0]).length >= Object.keys(rows[rows.length -1]).length ? 0 : rows.length -1 //in case the first cell is missing keys
+        let rawKeys = Object.keys(rows[k]);
+        let sk = []
+        for(let i =0; i< rawKeys.length; i++){
+            const temp = rawKeys[i].split("\\")
+            const last = temp.length -1
+            sk.push(temp[last])
+        }
+        if(sk.indexOf("High Pressure Fault") > 0) $scope.pumps.types = "Booster"
+        else if(sk.indexOf("Over Temp Fault") > 0) $scope.pumps.types = "Condensate"
+        else if(sk.indexOf("Low Level Alarm") > 0) $scope.pumps.types = "Roof Tank"
+        else $scope.pumps.types = "Sewer"
+
         
         if($scope.pumps.types === "Booster") ctrl.processSleep(rows)
+        if($scope.pumps.types === "Condensate") ctrl.processTemp(rows)
         ctrl.processAlarms(rows)
-        ctrl.processRuntimes(rows)   
+        ctrl.processRuntimes(rows) 
+        
+        console.log(ctrl.finalProcessedObject)
     }
 
     // ================================== //
@@ -197,7 +214,7 @@ export const dp = ['$http', '$scope', function($http, $scope){
         delete runtimeObj["Time"]
         // console.log(runtimeObj)
         ctrl.finalProcessedObject = {...ctrl.finalProcessedObject, ...runtimeObj}
-        console.log(ctrl.finalProcessedObject)
+        
     }
 
     // ****************************** END OF PROCESS RUNTIME FUNCTION **************************************** ///
@@ -272,10 +289,21 @@ export const dp = ['$http', '$scope', function($http, $scope){
         delete sleepObj.sleepTimeRaw
         // console.log(sleepObj)
         ctrl.finalProcessedObject = {...ctrl.finalProcessedObject, ...sleepObj}
-        console.log(ctrl.finalProcessedObject)
+        
     }
 
     // ****************************** END OF PROCESS SLEEP FUNCTION **************************************** ///
+
+    // ================================== //
+    //    Processing Tempurature Data     //
+    // ================================== //    
+
+    this.processTemp = (rows) => {
+        console.log("Temp")
+    }
+
+    // ****************************** END OF PROCESS TEMPURATURE FUNCTION **************************************** ///
+
 
     // ================================== //
     //   Start of Proecessing Excel Fle   //
