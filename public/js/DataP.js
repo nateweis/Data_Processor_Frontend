@@ -3,7 +3,7 @@ export const dp = ['$http', '$scope', function($http, $scope){
     
     this.finalProcessedObject = {}
     $scope.pumps = {
-        types: "Sewer"
+        types: "Booster"
     };
    
 
@@ -42,9 +42,10 @@ export const dp = ['$http', '$scope', function($http, $scope){
     this.excelFileProcessing = function(excelFile){
         ctrl.finalProcessedObject = {}
         const rows = excelFile
-            
+        
+        if($scope.pumps.types === "Booster") ctrl.processSleep(rows)
         ctrl.processAlarms(rows)
-        ctrl.processRuntimes(rows)
+        ctrl.processRuntimes(rows)   
     }
 
     // ================================== //
@@ -106,7 +107,7 @@ export const dp = ['$http', '$scope', function($http, $scope){
         for (let i = 0; i < rawKeys.length; i++) {
             const sK = rawKeys[i].split("\\") // sK stands for split keys 
             // console.log(sK[sK.length - 1])
-            if(sK[sK.length - 1] === "Time" || sK[sK.length - 1] === "Run" || sK[sK.length - 1] === "Running") { //making an obj to push into our array 
+            if(sK[sK.length - 1] === "Run" || sK[sK.length - 1] === "Running") { //making an obj to push into our array 
                 const obj = {
                     index: i
                 }
@@ -200,6 +201,85 @@ export const dp = ['$http', '$scope', function($http, $scope){
     }
 
     // ****************************** END OF PROCESS RUNTIME FUNCTION **************************************** ///
+
+
+
+
+
+    // ================================== //
+    //     Procssing The Sleep Data       //
+    // ================================== // 
+
+    this.processSleep = (rows) => {
+        const k = Object.keys(rows[0]).length >= Object.keys(rows[rows.length -1]).length ? 0 : rows.length -1 //in case the first cell is missing keys
+        let rawKeys = Object.keys(rows[k]);
+        let indexHolder = [];
+
+        //*** Making an Array of Relvent Variables ***
+        for (let i = 0; i < rawKeys.length; i++) {
+            const sK = rawKeys[i].split("\\") // sK stands for split keys 
+            // console.log(sK[sK.length - 1])
+            if(sK[sK.length - 1] === "Run") { //making an obj to push into our array 
+                const obj = {
+                    index: i,
+                    type: sK[sK.length - 2]
+                }
+                indexHolder.push(obj)
+            }
+        }
+
+        // *** Using the Array of relevent Variables to make an obj of sleep ****
+        const sleepObj = { // an object to hold the number sleep info
+            sleepCount: 0,
+            sleepTimeRaw: 0,
+            sleepTimeTotal: {h:0, m:0, s:0}
+        } 
+        for(let i = 0; i < rows.length; i++){
+            if(parseInt(rows[i][rawKeys[indexHolder[0].index]]) === 0 && parseInt(rows[i][rawKeys[indexHolder[1].index]]) === 0){
+                if(i === 0){sleepObj.sleepCount += 1}
+                else if(parseInt(rows[i -1][rawKeys[indexHolder[0].index]]) !== 0 || parseInt(rows[i -1][rawKeys[indexHolder[1].index]]) !== 0){ //if the previous row is not the same as this row add to the count and time
+                    sleepObj.sleepCount += 1 // adding to the sleep count 
+
+                    const toSecondsAr = [3600, 60, 1]
+                    const currentTime = rows[i]["Time"].split(":") //getting the times for current sleep
+
+                    let nextTime
+                    for(let j = i; j < rows.length; j++){ // getting the time for next time its not is sleep 
+                        if(rows[j] && (parseInt(rows[j][rawKeys[indexHolder[0].index]]) === 1 || parseInt(rows[j][rawKeys[indexHolder[1].index]]) === 1)){
+                            nextTime = rows[j]["Time"].split(":")
+                            break;
+                        }
+                    }
+
+                    if(nextTime){ // converting the time string to seconds and adding to the obj
+                        let num1 = 0, num2 = 0
+
+                        for(let j=0; j < currentTime.length; j++){ //converting the times to seconds 
+                            num1 += parseInt(currentTime[j]) * toSecondsAr[j]
+                            num2 += parseInt(nextTime[j]) * toSecondsAr[j]
+                        }
+                        
+                        const sum = num2 >= num1 ? num2 - num1 : (86400 - num1) + num2 //subtracting the next time off from time on to see how long it was on for 
+                        sleepObj.sleepTimeRaw += sum //getting the raw time data 
+                    }
+
+
+                }
+            }
+        }
+
+        sleepObj.sleepTimeTotal = convertFromSecs(sleepObj.sleepTimeRaw)
+        delete sleepObj.sleepTimeRaw
+        // console.log(sleepObj)
+        ctrl.finalProcessedObject = {...ctrl.finalProcessedObject, ...sleepObj}
+        console.log(ctrl.finalProcessedObject)
+    }
+
+    // ****************************** END OF PROCESS SLEEP FUNCTION **************************************** ///
+
+    // ================================== //
+    //   Start of Proecessing Excel Fle   //
+    // ================================== // 
 
     this.showFile = function(){
         const myFile = document.getElementById("fileBtn");
