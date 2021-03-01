@@ -176,14 +176,18 @@ export const dp = ['$http', '$scope', function($http, $scope){
 
                         const toSecondsAr = [3600, 60, 1]
                         const currentTime = rows[i]["Time"].split(":") //getting the times for current on and next time off
-
-                        let nextTime
+                        const currentDate = parseInt(rows[i]["Date"].split(" ")[1])  * 86400
+                        
+                        let nextTime, nextDate
                         for(let j = i; j < rows.length; j++){
                             if(rows[j] && parseInt(rows[j][rawKeys[v.index]]) === 0){
                                 nextTime = rows[j]["Time"].split(":")
+                                nextDate = parseInt(rows[j]["Date"].split(" ")[1]) * 86400
                                 break;
                             }
                         }
+
+                        // if(nextDate && currentDate !== nextDate) console.log(currentDate)
 
                         if(nextTime){
                             let num1 = 0, num2 = 0
@@ -192,8 +196,11 @@ export const dp = ['$http', '$scope', function($http, $scope){
                                 num1 += parseInt(currentTime[j]) * toSecondsAr[j]
                                 num2 += parseInt(nextTime[j]) * toSecondsAr[j]
                             }
+
+                            num2 += nextDate;
+                            num1 += currentDate
                             
-                            const sum = num2 >= num1 ? num2 - num1 : (86400 - num1) + num2 //subtracting the next time off from time on to see how long it was on for 
+                            const sum = num2 - num1 //subtracting the next time off from time on to see how long it was on for 
                             runtimeObj[runTime] += sum //getting the raw time data 
                         }
                             
@@ -249,9 +256,11 @@ export const dp = ['$http', '$scope', function($http, $scope){
         const sleepObj = { // an object to hold the number sleep info
             sleepCount: 0,
             sleepTimeRaw: 0,
-            sleepTimeTotal: {h:0, m:0, s:0}
+            sleepTimeTotal: {h:0, m:0, s:0},
+            bothRunningCount:0
         } 
         for(let i = 0; i < rows.length; i++){
+            if(parseInt(rows[i][rawKeys[indexHolder[0].index]]) === 1 && parseInt(rows[i][rawKeys[indexHolder[1].index]]) === 1){sleepObj.bothRunningCount +=1}
             if(parseInt(rows[i][rawKeys[indexHolder[0].index]]) === 0 && parseInt(rows[i][rawKeys[indexHolder[1].index]]) === 0){
                 if(i === 0){sleepObj.sleepCount += 1}
                 else if(parseInt(rows[i -1][rawKeys[indexHolder[0].index]]) !== 0 || parseInt(rows[i -1][rawKeys[indexHolder[1].index]]) !== 0){ //if the previous row is not the same as this row add to the count and time
