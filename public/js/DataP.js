@@ -187,7 +187,6 @@ export const dp = ['$http', '$scope', function($http, $scope){
                             }
                         }
 
-                        // if(nextDate && currentDate !== nextDate) console.log(currentDate)
 
                         if(nextTime){
                             let num1 = 0, num2 = 0
