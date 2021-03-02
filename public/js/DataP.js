@@ -1,3 +1,5 @@
+
+
 export const dp = ['$http', '$scope', function($http, $scope){
     const ctrl = this; 
     
@@ -63,6 +65,20 @@ export const dp = ['$http', '$scope', function($http, $scope){
         ctrl.processRuntimes(rows) 
         
         console.log(ctrl.finalProcessedObject)
+        makeIntoPdf(ctrl.finalProcessedObject)
+    }
+
+    // takes data and makes it into a pdf
+    const makeIntoPdf = (dataObj) => {
+        const e = document.getElementById('piechart')
+        
+        html2canvas(e).then(canvas => {
+            const imgData = canvas.toDataURL('image/png')
+            const doc = new jspdf.jsPDF()
+            const imgHeight = canvas.height * 208 / canvas.width
+            doc.addImage(imgData, 0, 0, 208, imgHeight)
+            doc.save("newPdf.pdf")
+        })
     }
 
     // ================================== //
