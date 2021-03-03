@@ -7,50 +7,61 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.8/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.0/jspdf.umd.min.js"></script>
+    
     <script type="module" src="./js/app.js"></script>
 </head>
 <body ng-controller="DataController as dp">
-
-    <!-- <select ng-model="pumps.types">
-      <option value="Sewer">Sewer</option>
-      <option value="Booster">Booster</option>
-      <option value="Condensate">Condensate</option>
-      <option value="Roof Tank">Roof Tank</option>
-    </select> -->
-    <!-- singleSelect = {{pumps.types}} <br> <br>  -->
-
-   
+ 
     <input type="file" id="fileBtn" ng-click="dp.didStep()">
     <button ng-click="dp.showFile()">Show File</button>
 
+
+<!-- Figuring out Charts -->
     <style>
         *{margin: 0px; padding: 0px;}
         canvas{
             border: 1px solid black;
-            margin-left: 180px;
-            margin-top: 70px;
         }
     </style>
     <canvas id="piechart"></canvas>
     <script>
-        let canvas = document.querySelector('canvas');
-        canvas.width = 1000;
-        canvas.height = 500;
-        let xGrid =10
-        let yGrid = 10
+        let canvas = document.getElementById('piechart');
+        canvas.width = 400
+        canvas.height = 100
 
-        let ctx = canvas.getContext('2d');
-        function drawGrid(){
-            ctx.beginPath()
+        const data = {pump1: 209, pump2: 36}
 
-            while(xGrid< canvas.height){
-                ctx.moveTo(0, xGrid)
-                ctx.lineTo(canvas.width, xGrid)
-                xGrid+=10
-            }
-            ctx.stroke()
+        const determinYScale = (num1, num2) => {
+            let n1 = num1, n2 = num2, tenLrg = 10, arr =[]
+            const lrgNum = n1 >= n2? n1:n2
+
+            while(lrgNum - tenLrg >=0 ) tenLrg *= 10
+
+            tenLrg = (tenLrg / 10) * 3
+            while(tenLrg <= lrgNum) tenLrg *=2
+            for(let i = 0; i< 4; i++){arr.push((tenLrg / 3) * i)}
+            console.log(arr)
         }
-        drawGrid()
+
+        determinYScale(data.pump1, data.pump2)
+
+        const drawBars = () => {
+            const ctx = canvas.getContext('2d')
+            let width = 40 // bar width 
+            let X = 50 // first bar position 
+
+            ctx.fillStyle = '#008080'
+
+            const tempVals = [50, 30, 70, 10, 20,99]
+            for(let i = 0; i < tempVals.length; i++){
+                const h = tempVals[i]
+                ctx.fillRect(X, canvas.height - h, width, h)
+                X += 60
+            }
+        }
+
+        drawBars()
+        
     </script>
     
 
