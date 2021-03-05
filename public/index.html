@@ -11,7 +11,8 @@
     <script type="module" src="./js/app.js"></script>
 </head>
 <body ng-controller="DataController as dp">
- 
+<div ng-controller="PdfController as pdf"> 
+    
     <input type="file" id="fileBtn" ng-click="dp.didStep()">
     <button ng-click="dp.showFile()">Show File</button>
 
@@ -143,6 +144,6 @@
     </script>
     
 
-   
+</div>  
 </body>
 </html>

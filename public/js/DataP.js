@@ -1,6 +1,6 @@
 
 
-export const dp = ['$http', '$scope', function($http, $scope){
+export const dp = ['$http', '$scope', 'DataProcessingService', function($http, $scope, DataProcessingService){
     const ctrl = this; 
     
     this.finalProcessedObject = {}
@@ -64,23 +64,10 @@ export const dp = ['$http', '$scope', function($http, $scope){
         ctrl.processAlarms(rows)
         ctrl.processRuntimes(rows) 
         
-        console.log(ctrl.finalProcessedObject)
-        makeIntoPdf(ctrl.finalProcessedObject)
+        // console.log(ctrl.finalProcessedObject)
+        DataProcessingService.activateMakePdf(ctrl.finalProcessedObject)
     }
 
-    // takes data and makes it into a pdf
-    const makeIntoPdf = (dataObj) => {
-        const e = document.getElementById('pdfDiv')
-
-        html2canvas(e).then(canvas => {
-            const imgData = canvas.toDataURL('image/png')
-            const doc = new jspdf.jsPDF()
-            const imgHeight = canvas.height * 210 / canvas.width
-            console.log(imgHeight)
-            doc.addImage(imgData, 0, 0, 210, imgHeight)
-            doc.save("newPdf.pdf")
-        })
-    }
 
     // ================================== //
     //     Procssing The Alarm Data       //
