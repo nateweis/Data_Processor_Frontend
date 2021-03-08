@@ -5,7 +5,7 @@ export const dp = ['$http', '$scope', 'DataProcessingService', function($http, $
     
     this.finalProcessedObject = {}
     $scope.pumps = {
-        types: "other"
+        type: "other"
     };
    
 
@@ -35,7 +35,7 @@ export const dp = ['$http', '$scope', 'DataProcessingService', function($http, $
 
     // lets the next button be available 
     this.didStep = () => {
-        // console.log($scope.pumps.types)
+        // console.log($scope.pumps.type)
     }
 
     // ****************************** END OF HELPER fUNCTIONS FUNCTION **************************************** ///
@@ -53,18 +53,19 @@ export const dp = ['$http', '$scope', 'DataProcessingService', function($http, $
             const last = temp.length -1
             sk.push(temp[last])
         }
-        if(sk.indexOf("High Pressure Fault") > 0) $scope.pumps.types = "Booster"
-        else if(sk.indexOf("Over Temp Fault") > 0) $scope.pumps.types = "Condensate"
-        else if(sk.indexOf("Low Level Alarm") > 0) $scope.pumps.types = "Roof Tank"
-        else $scope.pumps.types = "Sewer"
+        if(sk.indexOf("High Pressure Fault") > 0) $scope.pumps.type = "booster"
+        else if(sk.indexOf("Over Temp Fault") > 0) $scope.pumps.type = "condensate"
+        else if(sk.indexOf("Low Level Alarm") > 0) $scope.pumps.type = "tankfill"
+        else $scope.pumps.type = "sewer"
 
         
-        if($scope.pumps.types === "Booster") ctrl.processSleep(rows)
-        if($scope.pumps.types === "Condensate") ctrl.processTemp(rows)
+        if($scope.pumps.type === "booster") ctrl.processSleep(rows)
+        if($scope.pumps.type === "condensate") ctrl.processTemp(rows)
         ctrl.processAlarms(rows)
         ctrl.processRuntimes(rows) 
         
         // console.log(ctrl.finalProcessedObject)
+        ctrl.finalProcessedObject = {...ctrl.finalProcessedObject, ...$scope.pumps}
         DataProcessingService.activateMakePdf(ctrl.finalProcessedObject)
     }
 
