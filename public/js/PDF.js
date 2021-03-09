@@ -37,8 +37,8 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
     // ************************************************
     // To see it works in angular
-    const data = {pump1: 209, pump2: 544} //dummy data
-    const data2 = {pump1: 400, pump2: 282} 
+    this.pastPumpData = {"Pump1 Starts": 209, "Pump2 Starts": 544} //dummy data
+    
 
     const determinYScale = (num) => {
         let lrgNum = num, tenLrg = 10, arr =[]
@@ -60,25 +60,25 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         canvas.height = 250
 
         let highNum = 0 , data = []
-        const sk = Object.keys(ctrl.currentPumpData) // getting the y scale 
-        sk.forEach(k => {
-            const ar = k.split(" ") 
-            if(ar[ar.length -1] === "Starts"){
-                ctrl.currentPumpData[k] >= highNum ? highNum = ctrl.currentPumpData[k] : highNum = highNum;
-                data.push(ctrl.currentPumpData[k])
-            }
-        })
         if(ctrl.pastPumpData){
             const sk2 = Object.keys(ctrl.pastPumpData)
             sk2.forEach(k => {
                 const ar = k.split(" ") 
                 if(ar[ar.length -1] === "Starts"){
                     ctrl.pastPumpData[k] >= highNum ? highNum = ctrl.pastPumpData[k] : highNum = highNum;
-                    data.push(ctrl.currentPumpData[k])
+                    data.push(ctrl.pastPumpData[k])
                 }
             })
-        }    
-        const yScale = determinYScale(highNum) 
+        }
+        const sk = Object.keys(ctrl.currentPumpData) 
+        sk.forEach(k => {
+            const ar = k.split(" ") 
+            if(ar[ar.length -1] === "Starts"){
+                ctrl.currentPumpData[k] >= highNum ? highNum = ctrl.currentPumpData[k] : highNum = highNum;
+                data.push(ctrl.currentPumpData[k])
+            }
+        })    
+        const yScale = determinYScale(highNum) // getting the y scale 
 
         let width = 25 // bar width 
         let X = 50 // first bar position 
@@ -102,12 +102,11 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         }
 
 
-        const tempVals = data2 ? [data.pump1, data.pump2, data2.pump1, data2.pump2] : [data.pump1, data.pump2]
         for(let i = 0; i < data.length; i++){ // loop through the bars 
             const h = (data[i] / yScale[yScale.length -1]) * 100
 
             if(i % 2 === 0){
-                X += 50
+                ctrl.pastPumpData ? X += 50 : X+= 120
                 ctx.fillStyle = '#056ee6'
                 ctx.fillRect(X , (canvas.height - h)-80, width, h) //making bar
             }
@@ -136,7 +135,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         ctx.fillStyle = '#000000'
         ctx.fillText("Pump 2", 215, 229)
 
-        if(data2){
+        if(ctrl.pastPumpData){
             ctx.fillText("Date 1", 110, 190)
             ctx.fillText("Date 2", 230, 190)
         }
