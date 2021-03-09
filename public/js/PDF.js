@@ -14,7 +14,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         ctrl.currentPumpData = dataObj;
         $timeout(()=>drawStartsChart(),50)
         
-        console.log(ctrl.currentPumpData)
+        // console.log(ctrl.currentPumpData)
     }
 
     // ================================== //
@@ -40,15 +40,8 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     const data = {pump1: 209, pump2: 544} //dummy data
     const data2 = {pump1: 400, pump2: 282} 
 
-    const determinYScale = (num1, num2) => {
-        let n1 = num1.pump1, n2 = num1.pump2, tenLrg = 10, arr =[], past1, past2, lrgNum
-        if(num2){
-            past1 = num2.pump1;
-            past2 = num2.pump2;
-            if(past1 > n1) n1 = past1
-            if(past2 > n2) n2 = past2
-        }
-        lrgNum = n1 >= n2? n1:n2
+    const determinYScale = (num) => {
+        let lrgNum = num, tenLrg = 10, arr =[]
 
         while(lrgNum - tenLrg >=0 ) tenLrg *= 10
 
@@ -65,7 +58,28 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         const ctx = canvas.getContext('2d')
         canvas.width = 400
         canvas.height = 250
-        const yScale = determinYScale(data, data2) // getting the y scale 
+
+        let highNum = 0 , data = []
+        const sk = Object.keys(ctrl.currentPumpData) // getting the y scale 
+        sk.forEach(k => {
+            const ar = k.split(" ") 
+            if(ar[ar.length -1] === "Starts"){
+                ctrl.currentPumpData[k] >= highNum ? highNum = ctrl.currentPumpData[k] : highNum = highNum;
+                data.push(ctrl.currentPumpData[k])
+            }
+        })
+        if(ctrl.pastPumpData){
+            const sk2 = Object.keys(ctrl.pastPumpData)
+            sk2.forEach(k => {
+                const ar = k.split(" ") 
+                if(ar[ar.length -1] === "Starts"){
+                    ctrl.pastPumpData[k] >= highNum ? highNum = ctrl.pastPumpData[k] : highNum = highNum;
+                    data.push(ctrl.currentPumpData[k])
+                }
+            })
+        }    
+        const yScale = determinYScale(highNum) 
+
         let width = 25 // bar width 
         let X = 50 // first bar position 
 
@@ -89,8 +103,8 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
 
         const tempVals = data2 ? [data.pump1, data.pump2, data2.pump1, data2.pump2] : [data.pump1, data.pump2]
-        for(let i = 0; i < tempVals.length; i++){ // loop through the bars 
-            const h = (tempVals[i] / yScale[yScale.length -1]) * 100
+        for(let i = 0; i < data.length; i++){ // loop through the bars 
+            const h = (data[i] / yScale[yScale.length -1]) * 100
 
             if(i % 2 === 0){
                 X += 50
@@ -105,7 +119,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
             ctx.font = '12px serif'; // words on top of bar
             ctx.fillStyle = '#000000'
-            ctx.fillText(`${tempVals[i]}`, X +4, (canvas.height - h)-85);
+            ctx.fillText(`${data[i]}`, X +4, (canvas.height - h)-85);
 
             X += 35 // move over for next bar
         }
