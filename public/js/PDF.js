@@ -22,7 +22,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     // ================================== //
 
     this.savePdf = () => {
-        const e = document.getElementById('pdfDiv')
+        const e = document.getElementById(`${ctrl.currentPumpData.type}PdfDiv`)
 
         html2canvas(e).then(canvas => {
             const imgData = canvas.toDataURL('image/png')
@@ -37,7 +37,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
     // ************************************************
     // To see it works in angular
-    this.pastPumpData = {"Pump1 Starts": 209, "Pump2 Starts": 544} //dummy data
+    // this.pastPumpData = {"Pump1 Starts": 209, "Pump2 Starts": 544} //dummy data
     
 
     const determinYScale = (num) => {
@@ -54,7 +54,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     
 
     const drawStartsChart = () => {
-        let canvas = document.getElementById('piechart');
+        let canvas = document.getElementById('startschart');
         const ctx = canvas.getContext('2d')
         canvas.width = 400
         canvas.height = 250
