@@ -2,83 +2,61 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     const ctrl = this;
     this.showPdfPreview = false;
     this.currentPumpData = {};
-
+    
     this.backToSelectFile = () => ctrl.showPdfPreview = false
     const displayPdfPages = (pump) => {ctrl.includePath = `partials/previews/${pump}.html`, ctrl.showPdfPreview= true}
-    
-    // takes data and makes it into a pdf
-    $rootScope.$on('makePdf', (event, data)=> makeIntoPdf(data))
-    
-    const makeIntoPdf = (dataObj) => {
-        $timeout(()=>displayPdfPages(dataObj.type) )   
-        ctrl.currentPumpData = dataObj;
-        $timeout(()=>drawStartsChart(),50)
-        
-        // console.log(ctrl.currentPumpData)
-    }
 
     // ================================== //
-    //        Final PDF Commit            //
+    // Getting the Y Scale for the Graghs //
     // ================================== //
-
-    this.savePdf = () => {
-        const e = document.getElementById(`${ctrl.currentPumpData.type}PdfDiv`)
-
-        html2canvas(e).then(canvas => {
-            const imgData = canvas.toDataURL('image/png')
-            const doc = new jspdf.jsPDF()
-            const imgHeight = canvas.height * 210 / canvas.width
-            // console.log(imgHeight)
-            doc.addImage(imgData, 0, 0, 210, imgHeight)
-            doc.save("newPdf.pdf")
-        })
-    }
-
-
-    // ************************************************
-    // To see it works in angular
-    // this.pastPumpData = {"Pump1 Starts": 209, "Pump2 Starts": 544} //dummy data
-    
-
     const determinYScale = (num) => {
         let lrgNum = num, tenLrg = 10, arr =[]
 
-        while(lrgNum - tenLrg >=0 ) tenLrg *= 10
+        while(lrgNum - tenLrg >=0 ) tenLrg *= 10 // find the next number up divisable by 10
 
-        tenLrg = (tenLrg / 10) * 3
-        while(tenLrg <= lrgNum) tenLrg *=2
+        tenLrg = (tenLrg / 10) * 3 // divide that number by 10 so they have the same amount of digits then multiply by 3 so divisable by 3 (for 3 even parts)
+        while(tenLrg <= lrgNum) tenLrg *=2 // if new number not grater then original num then double it
         for(let i = 0; i< 4; i++){arr.push((tenLrg / 3) * i)}
         return arr
     }
+    // *****
+    const determinYScaleTime = (num, t) => {
+        let n = num, arr =[], timeUp = 0, topScale = t === 'h' ? 18 : 15
+        while(n > topScale) topScale *=2 // if new number not grater then original num then double it
+        if(topScale === 60) timeUp = 1 // for converting 60 m/s to the next time slot
+
+        for(let i = 0; i< 4; i++){ // taking parts of the top time and formating it to the appropiate time
+            let holderNum = (topScale /3) * i ;
+            if(t !== 'h' && holderNum < 9) holderNum = '0' + holderNum;
+            if(t === 's'){
+                if(timeUp === 1 && i === 3) arr.push(`0:01:00`)
+                else arr.push(`0:00:${holderNum}`)
+            }
+            else if(t === 'm'){
+                if(timeUp === 1 && i === 3) arr.push(`1:00:00`)
+                else arr.push(`0:${holderNum}:00`)
+            }
+            else arr.push(`${holderNum}:00:00`)
+        }
+
+        return arr
+    }
+    console.log(determinYScaleTime(564, 'h'))
+
+    // ***************** END *******************************
 
     
+    // ================================== //
+    //      Draw the Canvas Graphs        //
+    // ================================== //
 
-    const drawStartsChart = () => {
-        let canvas = document.getElementById('startschart');
+    const drawGraph = (graph, scale, d, dP) => {
+        let canvas = document.getElementById(graph);
         const ctx = canvas.getContext('2d')
-        canvas.width = 400
-        canvas.height = 250
+        canvas.width = 400;
+        canvas.height = 250;
+        let data = d, yScale = scale, dataPercentage = dP
 
-        let highNum = 0 , data = []
-        if(ctrl.pastPumpData){
-            const sk2 = Object.keys(ctrl.pastPumpData)
-            sk2.forEach(k => {
-                const ar = k.split(" ") 
-                if(ar[ar.length -1] === "Starts"){
-                    ctrl.pastPumpData[k] >= highNum ? highNum = ctrl.pastPumpData[k] : highNum = highNum;
-                    data.push(ctrl.pastPumpData[k])
-                }
-            })
-        }
-        const sk = Object.keys(ctrl.currentPumpData) 
-        sk.forEach(k => {
-            const ar = k.split(" ") 
-            if(ar[ar.length -1] === "Starts"){
-                ctrl.currentPumpData[k] >= highNum ? highNum = ctrl.currentPumpData[k] : highNum = highNum;
-                data.push(ctrl.currentPumpData[k])
-            }
-        })    
-        const yScale = determinYScale(highNum) // getting the y scale 
 
         let width = 25 // bar width 
         let X = 50 // first bar position 
@@ -103,7 +81,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
 
         for(let i = 0; i < data.length; i++){ // loop through the bars 
-            const h = (data[i] / yScale[yScale.length -1]) * 100
+            const h = dataPercentage[i]
 
             if(i % 2 === 0){
                 ctrl.pastPumpData ? X += 50 : X+= 120
@@ -139,9 +117,78 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             ctx.fillText("Date 1", 110, 190)
             ctx.fillText("Date 2", 230, 190)
         }
-
     }
-    // ************************************************
+
+    // ***************** END *******************************
+
+    // ================================== //
+    //      Draw the Canvas Starts        //
+    // ================================== //
+    
+    const drawStartsChart = () => {
+        let highNum = 0 , data = [], dataPercentage = []
+
+        if(ctrl.pastPumpData){ // finding out wich numbers are relevent and which is the largest relevent number 
+            const sk2 = Object.keys(ctrl.pastPumpData)
+            sk2.forEach(k => {
+                const ar = k.split(" ") 
+                if(ar[ar.length -1] === "Starts"){
+                    ctrl.pastPumpData[k] >= highNum ? highNum = ctrl.pastPumpData[k] : highNum = highNum;
+                    data.push(ctrl.pastPumpData[k]);
+                }
+            })
+        }
+        const sk = Object.keys(ctrl.currentPumpData) 
+        sk.forEach(k => {
+            const ar = k.split(" ") 
+            if(ar[ar.length -1] === "Starts"){
+                ctrl.currentPumpData[k] >= highNum ? highNum = ctrl.currentPumpData[k] : highNum = highNum;
+                data.push(ctrl.currentPumpData[k])
+            }
+        })  
+
+        const yScale = determinYScale(highNum) // getting the y scale 
+
+        for(let i = 0; i < data.length; i++){ dataPercentage.push((data[i] / yScale[yScale.length -1]) * 100) }// turning relevent data into a percentage for the graphs 
+
+        
+
+        drawGraph('startschart', yScale, data, dataPercentage)
+    }
+    // ******************** END ****************************
+    
+    // takes data and makes it into a pdf
+    $rootScope.$on('makePdf', (event, data)=> makeIntoPdf(data))
+    
+    const makeIntoPdf = (dataObj) => {
+        $timeout(()=>displayPdfPages(dataObj.type) )   
+        ctrl.currentPumpData = dataObj;
+        $timeout(()=>drawStartsChart(),50)
+        
+        // console.log(ctrl.currentPumpData)
+    }
+
+
+    // ================================== //
+    //        Final PDF Commit            //
+    // ================================== //
+
+    this.savePdf = () => {
+        const e = document.getElementById(`${ctrl.currentPumpData.type}PdfDiv`)
+
+        html2canvas(e).then(canvas => {
+            const imgData = canvas.toDataURL('image/png')
+            const doc = new jspdf.jsPDF()
+            const imgHeight = canvas.height * 210 / canvas.width
+            // console.log(imgHeight)
+            doc.addImage(imgData, 0, 0, 210, imgHeight)
+            doc.save("newPdf.pdf")
+        })
+    }
+
+
+    // ******************* END *****************************
+    
 
 
 }]
