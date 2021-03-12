@@ -41,7 +41,6 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
         return arr
     }
-    console.log(determinYScaleTime(564, 'h'))
 
     // ***************** END *******************************
 
@@ -157,6 +156,37 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     }
     // ******************** END ****************************
     
+    // ================================== //
+    //     Draw the Canvas Ttoal Run      //
+    // ================================== //
+
+    const drawTotalRuntimeChart = () => {
+        const time = processTime("Total");
+        const yScale = determinYScaleTime(time.highNum, time.timePlace);
+        const lastYscale = yScale[yScale.length -1].split(":");
+        let dataPercentage=[], calculatedLastYscale =0
+        
+        const toSecondsAr = [3600, 60, 1]
+        for(let i =0; i < 3; i++) calculatedLastYscale += (parseInt(lastYscale[i]) * toSecondsAr[i]) // converting the last y to seconds
+
+        time.rawTime.forEach( t =>{ // turning the data into a graph percentage
+            let holder = 0;
+            holder += parseInt(t.h) * 3600;
+            holder += parseInt(t.m) * 60;
+            holder += parseInt(t.s);
+            
+            dataPercentage.push((holder / calculatedLastYscale) * 100)
+        })
+        
+        drawGraph('totalrunchart', yScale, time.data, dataPercentage)
+    }
+
+    // ******************** END ****************************
+
+    // ================================================================================================================================ //
+    //                                          THIS IS THE START OF THE PDF MAKING PROCESS                                            //
+    // ============================================================================================================================== //
+    
     // takes data and makes it into a pdf
     $rootScope.$on('makePdf', (event, data)=> makeIntoPdf(data))
     
@@ -164,10 +194,68 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         $timeout(()=>displayPdfPages(dataObj.type) )   
         ctrl.currentPumpData = dataObj;
         $timeout(()=>drawStartsChart(),50)
+        $timeout(()=>drawTotalRuntimeChart(),50)
         
-        // console.log(ctrl.currentPumpData)
+        console.log(ctrl.currentPumpData)
     }
 
+    // ================================== //
+    //           Process Time             //
+    // ================================== //
+    const processTime = (str) => {
+        let highNum = 0, timePlace = 0, data =[], rawTime=[]
+
+        if(ctrl.pastPumpData){ // finding out wich numbers are relevent and which is the largest relevent number 
+            const sk2 = Object.keys(ctrl.pastPumpData)
+            sk2.forEach(k => {
+                const ar = k.split(" ") 
+                if(ar[ar.length -1] === str){
+                    const timeObj = ctrl.pastPumpData[k]
+                    rawTime.push(timeObj)
+
+                    let tN = 0, tP = 0 //getting the highest val and time of each pump
+                    if(timeObj.h > 0) {tN = timeObj.h, tP = 3}
+                    else if(timeObj.m > 0) {tN = timeObj.m, tP = 2}
+                    else {tN = timeObj.s, tP = 1}
+                    
+                    if(tP > timePlace){highNum = tN, timePlace = tP} //determing if the pumps highest val is the overall highest val
+                    else if (tP === timePlace){ if(tN > highNum) highNum = tN}
+
+                    if(timeObj.m < 10) timeObj.m = "0" + timeObj.m // formating the data to into time for display 
+                    if(timeObj.s < 10) timeObj.s = "0" + timeObj.s
+                    data.push(`${timeObj.h}:${timeObj.m}:${timeObj.s}`)
+                }
+            })
+        }
+        const sk = Object.keys(ctrl.currentPumpData) 
+        sk.forEach(k => {
+            const ar = k.split(" ") 
+            if(ar[ar.length -1] === str){
+                const timeObj = ctrl.currentPumpData[k]
+                rawTime.push(timeObj)
+
+                let tN = 0, tP = 0 //getting the highest val and time of each pump
+                if(timeObj.h > 0) {tN = timeObj.h, tP = 3}
+                else if(timeObj.m > 0) {tN = timeObj.m, tP = 2}
+                else {tN = timeObj.s, tP = 1}
+
+                if(tP > timePlace){highNum = tN, timePlace = tP} //determing if the pumps highest val is the overall highest val
+                else if (tP === timePlace){ if(tN > highNum) highNum = tN}
+
+                if(timeObj.m < 10) timeObj.m = "0" + timeObj.m // formating the data to into time for display 
+                if(timeObj.s < 10) timeObj.s = "0" + timeObj.s
+                data.push(`${timeObj.h}:${timeObj.m}:${timeObj.s}`)
+            }
+        })
+
+        if(timePlace === 3) timePlace = 'h'
+        if(timePlace === 2) timePlace = 'm'
+        if(timePlace === 1) timePlace = 's'
+
+        return {highNum, timePlace, data, rawTime}
+    }
+
+    // ******************** END ****************************
 
     // ================================== //
     //        Final PDF Commit            //

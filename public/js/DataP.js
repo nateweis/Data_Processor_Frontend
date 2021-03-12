@@ -345,9 +345,9 @@ export const dp = ['$http', '$scope', 'DataProcessingService', function($http, $
     // ****************************** END OF PROCESS TEMPURATURE FUNCTION **************************************** ///
 
 
-    // ================================== //
-    //   Start of Proecessing Excel Fle   //
-    // ================================== // 
+    // ================================================================================================================================ //
+    //                                     THIS IS THE START OF THE DATA PROCESSING PROCESS                                            //
+    // ============================================================================================================================== //
 
     this.showFile = function(){
         const myFile = document.getElementById("fileBtn");
