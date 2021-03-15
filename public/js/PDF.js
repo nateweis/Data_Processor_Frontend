@@ -83,22 +83,27 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
         for(let i = 0; i < data.length; i++){ // loop through the bars 
             const h = dataPercentage[i]
+            let t = ctx.measureText(`${data[i]}`);
+            let center = (width - t.width)/2; // calculating the center of the width of pixels for the numbers ontop of the bars
+
 
             if(i % 2 === 0){
                 ctrl.pastPumpData ? X += 50 : X+= 120
-                ctx.fillStyle = '#056ee6'
+                if(center < 0 ) X += (center -1); // pushing the bars apart if the text overlaps 
+                ctx.fillStyle = '#056ee6';
                 ctx.fillRect(X , (canvas.height - h)-80, width, h) //making bar
             }
             else{
+                if(center < 0 ) X +=( Math.abs(center) + 3); // pushing the bars apart if the text overlaps 
                 ctx.fillStyle = '#d97502'
                 ctx.fillRect(X, (canvas.height - h)-80, width, h) //making bar
             }
 
 
             ctx.font = '12px serif'; // words on top of bar
-            let t = ctx.measureText(`${data[i]}`)
             ctx.fillStyle = '#000000'
-            ctx.fillText(`${data[i]}`, X + ((width - t.width)/2), (canvas.height - h)-85);
+            ctx.fillText(`${data[i]}`, X + (center), (canvas.height - h)-85);
+            console.log(center)
 
             X += 35 // move over for next bar
         }
