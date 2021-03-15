@@ -2,6 +2,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     const ctrl = this;
     this.showPdfPreview = false;
     this.currentPumpData = {};
+    this.pastPumpData = {"Pump 1 Starts": 433, "Pump 2 Starts" : 366, "Pump 1 Total": {h: 117, m: 21, s: 49}, "Pump 2 Total": {h:137, m:41, s:30}} //dummy data
     
     this.backToSelectFile = () => ctrl.showPdfPreview = false
     const displayPdfPages = (pump) => {ctrl.includePath = `partials/previews/${pump}.html`, ctrl.showPdfPreview= true}
@@ -49,7 +50,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     //      Draw the Canvas Graphs        //
     // ================================== //
 
-    const drawGraph = (graph, scale, d, dP) => {
+    const drawGraph = (graph, scale, d, dP, title) => {
         let canvas = document.getElementById(graph);
         const ctx = canvas.getContext('2d')
         canvas.width = 400;
@@ -61,7 +62,8 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         let X = 50 // first bar position 
 
         ctx.font = '24px serif'; 
-        ctx.fillText("Starts", 175 , 40);
+        const text = ctx.measureText(title);
+        ctx.fillText(title, (canvas.width - text.width)/2 , 40);
         
         ctx.fillStyle = '#000000'
         ctx.strokeStyle = 'rgba(0,0,0,.2)'
@@ -152,12 +154,12 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
         
 
-        drawGraph('startschart', yScale, data, dataPercentage)
+        drawGraph('startschart', yScale, data, dataPercentage, "Starts")
     }
     // ******************** END ****************************
     
     // ================================== //
-    //     Draw the Canvas Ttoal Run      //
+    //     Draw the Canvas Total Run      //
     // ================================== //
 
     const drawTotalRuntimeChart = () => {
@@ -178,7 +180,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             dataPercentage.push((holder / calculatedLastYscale) * 100)
         })
         
-        drawGraph('totalrunchart', yScale, time.data, dataPercentage)
+        drawGraph('totalrunchart', yScale, time.data, dataPercentage, "Total Runtime")
     }
 
     // ******************** END ****************************
@@ -196,7 +198,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         $timeout(()=>drawStartsChart(),50)
         $timeout(()=>drawTotalRuntimeChart(),50)
         
-        console.log(ctrl.currentPumpData)
+        // console.log(ctrl.currentPumpData)
     }
 
     // ================================== //
