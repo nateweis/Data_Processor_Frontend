@@ -96,8 +96,9 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
 
             ctx.font = '12px serif'; // words on top of bar
+            let t = ctx.measureText(`${data[i]}`)
             ctx.fillStyle = '#000000'
-            ctx.fillText(`${data[i]}`, X +4, (canvas.height - h)-85);
+            ctx.fillText(`${data[i]}`, X + ((width - t.width)/2), (canvas.height - h)-85);
 
             X += 35 // move over for next bar
         }
