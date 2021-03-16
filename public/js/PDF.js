@@ -2,7 +2,8 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     const ctrl = this;
     this.showPdfPreview = false;
     this.currentPumpData = {};
-    this.pastPumpData = {"Pump 1 Starts": 433, "Pump 2 Starts" : 366, "Pump 1 Total": {h: 117, m: 21, s: 49}, "Pump 2 Total": {h:137, m:41, s:30}} //dummy data
+    // this.pastPumpData = {"Pump 1 Starts": 433, "Pump 2 Starts" : 366, "Pump 1 Total": {h: 117, m: 21, s: 49}, "Pump 2 Total": {h:137, m:41, s:30}, //dummy data
+    //                       "Pump 1 Avrage": {h:0, m:16, s:15}, "Pump 2 Avrage": {h:0, m:22, s:36} } 
     
     this.backToSelectFile = () => ctrl.showPdfPreview = false
     const displayPdfPages = (pump) => {ctrl.includePath = `partials/previews/${pump}.html`, ctrl.showPdfPreview= true}
@@ -47,7 +48,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
     
     // ================================== //
-    //      Draw the Canvas Graphs        //
+    //   Draw the Canvas General Graphs   //
     // ================================== //
 
     const drawGraph = (graph, scale, d, dP, title) => {
@@ -65,20 +66,22 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         const text = ctx.measureText(title);
         ctx.fillText(title, (canvas.width - text.width)/2 , 40);
         
+        ctx.textAlign = "right"
         ctx.fillStyle = '#000000'
         ctx.strokeStyle = 'rgba(0,0,0,.2)'
         for(let i = 0; i < yScale.length; i++){ // set up the y scale 
             let y = 170
             ctx.font = '12px serif'; 
-            ctx.fillText(yScale[i], 10 , y + (-33.3333 * i));
-
+            ctx.fillText(yScale[i], 40 , y + (-33.3333 * i));
+            // console.log(`${yScale[i]} is ${ctx.measureText(yScale[i]).width}px`)
             ctx.beginPath();
-            ctx.moveTo(35, y + (-33.3333 * i));
+            ctx.moveTo(45, y + (-33.3333 * i));
             ctx.lineTo(350, y + (-33.3333 * i));
             ctx.stroke();
             ctx.closePath();
             
         }
+        ctx.textAlign = "start"
 
 
         for(let i = 0; i < data.length; i++){ // loop through the bars 
@@ -103,7 +106,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             ctx.font = '12px serif'; // words on top of bar
             ctx.fillStyle = '#000000'
             ctx.fillText(`${data[i]}`, X + (center), (canvas.height - h)-85);
-            console.log(center)
+            // console.log(center)
 
             X += 35 // move over for next bar
         }
@@ -122,11 +125,40 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
         if(ctrl.pastPumpData){
             ctx.fillText("Date 1", 110, 190)
-            ctx.fillText("Date 2", 230, 190)
+            ctx.fillText(ctrl.currentPumpData.date, 222, 190)
         }
     }
 
     // ***************** END *******************************
+
+        
+    
+    // ================================== //
+    //     Draw the Canvas Avrag Run      //
+    // ================================== //
+
+    const drawRuntimeAvrgChart = () => {
+        const time = processTime("Avrage");
+        const yScale = determinYScaleTime(time.highNum, time.timePlace);
+        const lastYscale = yScale[yScale.length -1].split(":");
+        let dataPercentage=[], calculatedLastYscale =0
+        
+        const toSecondsAr = [3600, 60, 1]
+        for(let i =0; i < 3; i++) calculatedLastYscale += (parseInt(lastYscale[i]) * toSecondsAr[i]) // converting the last y to seconds
+
+        time.rawTime.forEach( t =>{ // turning the data into a graph percentage
+            let holder = 0;
+            holder += parseInt(t.h) * 3600;
+            holder += parseInt(t.m) * 60;
+            holder += parseInt(t.s);
+            
+            dataPercentage.push((holder / calculatedLastYscale) * 100)
+        })
+        
+        drawGraph('avrgrunchart', yScale, time.data, dataPercentage, "Average Runtime")
+    }
+
+    // ******************** END ****************************
 
     // ================================== //
     //      Draw the Canvas Starts        //
@@ -191,6 +223,96 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
     // ******************** END ****************************
 
+        
+    
+    // =================================== //
+    // Draw the Canvas Booster Sleep Times //
+    // =================================== //
+
+    const drawTotalSleepTime = () => {
+        let canvas = document.getElementById('sleeptimechart');
+        const ctx = canvas.getContext('2d')
+        canvas.width = 400;
+        canvas.height = 250;
+
+        ///////// Get The Calcs of Time ////////////////////
+        const time = processTime("sleepTimeTotal");
+        const yScale = determinYScaleTime(time.highNum, time.timePlace);
+        const lastYscale = yScale[yScale.length -1].split(":");
+        let dataPercentage=[], calculatedLastYscale =0, data = time.data
+        
+        const toSecondsAr = [3600, 60, 1]
+        for(let i =0; i < 3; i++) calculatedLastYscale += (parseInt(lastYscale[i]) * toSecondsAr[i]) // converting the last y to seconds
+
+        time.rawTime.forEach( t =>{ // turning the data into a graph percentage
+            let holder = 0;
+            holder += parseInt(t.h) * 3600;
+            holder += parseInt(t.m) * 60;
+            holder += parseInt(t.s);
+            
+            dataPercentage.push((holder / calculatedLastYscale) * 100)
+        })
+
+        /////////// Start Drawing the Canvas /////////////// 
+
+        let width = 25 // bar width 
+        let X = 50 // first bar position 
+        const title = "Total Sleep Time"
+
+        ctx.font = '24px serif'; 
+        const text = ctx.measureText(title);
+        ctx.fillText(title, (canvas.width - text.width)/2 , 40);
+        
+        ctx.textAlign = "right"
+        ctx.fillStyle = '#000000'
+        ctx.strokeStyle = 'rgba(0,0,0,.2)'
+        for(let i = 0; i < yScale.length; i++){ // set up the y scale 
+            let y = 170
+            ctx.font = '12px serif'; 
+            ctx.fillText(yScale[i], 40 , y + (-33.3333 * i));
+            // console.log(`${yScale[i]} is ${ctx.measureText(yScale[i]).width}px`)
+            ctx.beginPath();
+            ctx.moveTo(45, y + (-33.3333 * i));
+            ctx.lineTo(350, y + (-33.3333 * i));
+            ctx.stroke();
+            ctx.closePath();
+            
+        }
+        ctx.textAlign = "start"
+
+
+        for(let i = 0; i < data.length; i++){ // loop through the bars 
+            const h = dataPercentage[i]
+            let t = ctx.measureText(`${data[i]}`);
+            let center = (width - t.width)/2; // calculating the center of the width of pixels for the numbers ontop of the bars
+
+
+            
+            ctrl.pastPumpData ? X += 50 : X = canvas.width /2
+            ctx.fillStyle = '#056ee6';
+            ctx.fillRect(X , (canvas.height - h)-80, width, h) //making bar
+            
+           
+
+
+            ctx.font = '12px serif'; // words on top of bar
+            ctx.fillStyle = '#000000'
+            ctx.fillText(`${data[i]}`, X + (center), (canvas.height - h)-85);
+            // console.log(center)
+
+            X += 35 // move over for next bar
+        }
+
+        // Bottom Legend
+        if(ctrl.pastPumpData){
+            ctx.fillText("Date 1", 110, 190)
+            ctx.fillText(ctrl.currentPumpData.date, 222, 190)
+        }
+        
+    }
+
+    // ***************** END *******************************
+
     // ================================================================================================================================ //
     //                                          THIS IS THE START OF THE PDF MAKING PROCESS                                            //
     // ============================================================================================================================== //
@@ -203,8 +325,10 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         ctrl.currentPumpData = dataObj;
         $timeout(()=>drawStartsChart(),50)
         $timeout(()=>drawTotalRuntimeChart(),50)
+        $timeout(()=>drawRuntimeAvrgChart(),50)
+        if(ctrl.currentPumpData.type === "booster") $timeout(()=>drawTotalSleepTime(),50)
         
-        // console.log(ctrl.currentPumpData)
+        console.log(ctrl.currentPumpData)
     }
 
     // ================================== //

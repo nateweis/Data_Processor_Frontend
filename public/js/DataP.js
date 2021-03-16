@@ -42,9 +42,9 @@ export const dp = ['$http', '$scope', 'DataProcessingService', function($http, $
 
     // extender for the excel file processing 
     this.excelFileProcessing = function(excelFile){
-        ctrl.finalProcessedObject = {}
+        ctrl.finalProcessedObject = {date: excelFile[0]["Date"]}
         const rows = excelFile
-
+        
         const k = Object.keys(rows[0]).length >= Object.keys(rows[rows.length -1]).length ? 0 : rows.length -1 //in case the first cell is missing keys
         let rawKeys = Object.keys(rows[k]);
         let sk = []
