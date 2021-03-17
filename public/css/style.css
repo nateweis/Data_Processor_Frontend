@@ -1,0 +1,15 @@
+*{margin: 0px; padding: 0px;}
+h3{
+    margin-top: 10px;
+}
+canvas{
+    border: 1px solid rgba(0,0,0,.1);
+    margin: 20px 27px;
+}
+.waterLogo{
+    width: 90%;
+    margin-top: 50px;
+}
+.blueRibbin{
+    background-color: rgb(131, 167, 179);
+}

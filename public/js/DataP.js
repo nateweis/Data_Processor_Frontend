@@ -42,8 +42,9 @@ export const dp = ['$http', '$scope', 'DataProcessingService', function($http, $
 
     // extender for the excel file processing 
     this.excelFileProcessing = function(excelFile){
-        ctrl.finalProcessedObject = {date: excelFile[0]["Date"]}
+        ctrl.finalProcessedObject = {}
         const rows = excelFile
+        const dateArr = excelFile[0]["Date"].split(" ")
         
         const k = Object.keys(rows[0]).length >= Object.keys(rows[rows.length -1]).length ? 0 : rows.length -1 //in case the first cell is missing keys
         let rawKeys = Object.keys(rows[k]);
@@ -65,6 +66,7 @@ export const dp = ['$http', '$scope', 'DataProcessingService', function($http, $
         ctrl.processRuntimes(rows) 
         
         // console.log(ctrl.finalProcessedObject)
+        ctrl.finalProcessedObject.date = dateArr[0] + " " + dateArr[2]
         ctrl.finalProcessedObject = {...ctrl.finalProcessedObject, ...$scope.pumps}
         DataProcessingService.activateMakePdf(ctrl.finalProcessedObject)
     }

@@ -2,8 +2,8 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     const ctrl = this;
     this.showPdfPreview = false;
     this.currentPumpData = {};
-//     this.pastPumpData = {"Pump 1 Starts": 433, "Pump 2 Starts" : 366, "Pump 1 Total": {h: 817, m: 21, s: 49}, "Pump 2 Total": {h:137, m:41, s:30}, //dummy data
-// "Pump 1 Avrage": {h:0, m:16, s:15}, "Pump 2 Avrage": {h:0, m:22, s:36}, sleepTimeTotal:{h:192, m:44, s:26}, date: "Jan 1, 2021", avgTemp: 167, minTemp: 75, maxTemp: 191 } 
+    this.pastPumpData = {"Pump 1 Starts": 433, "Pump 2 Starts" : 366, "Pump 1 Total": {h: 117, m: 21, s: 49}, "Pump 2 Total": {h:137, m:41, s:30}, //dummy data
+"Pump 1 Avrage": {h:0, m:16, s:15}, "Pump 2 Avrage": {h:0, m:22, s:36}, sleepTimeTotal:{h:192, m:44, s:26}, date: "Jan 2021", avgTemp: 167, minTemp: 75, maxTemp: 191 } 
     
     this.backToSelectFile = () => ctrl.showPdfPreview = false
     const displayPdfPages = (pump) => {ctrl.includePath = `partials/previews/${pump}.html`, ctrl.showPdfPreview= true}
@@ -54,7 +54,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     const drawGraph = (graph, scale, d, dP, title) => {
         let canvas = document.getElementById(graph);
         const ctx = canvas.getContext('2d')
-        canvas.width = 400;
+        canvas.width = 350;
         canvas.height = 250;
         let data = d, yScale = scale, dataPercentage = dP
 
@@ -78,7 +78,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             
             ctx.beginPath();
             ctx.moveTo(55, y + (-33.3333 * i));
-            ctx.lineTo(350, y + (-33.3333 * i));
+            ctx.lineTo(340, y + (-33.3333 * i));
             ctx.stroke();
             ctx.closePath();
             
@@ -126,8 +126,8 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         ctx.fillText("Pump 2", 215, 229)
 
         if(ctrl.pastPumpData){
-            ctx.fillText(ctrl.pastPumpData.date, 100, 190)
-            ctx.fillText(ctrl.currentPumpData.date, 222, 190)
+            ctx.fillText(ctrl.pastPumpData.date, 104, 190)
+            ctx.fillText(ctrl.currentPumpData.date, 224, 190)
         }
     }
 
@@ -234,7 +234,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     const drawTotalSleepTime = () => {
         let canvas = document.getElementById('sleeptimechart');
         const ctx = canvas.getContext('2d')
-        canvas.width = 400;
+        canvas.width = 350;
         canvas.height = 250;
 
         ///////// Get The Calcs of Time ////////////////////
@@ -277,7 +277,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             
             ctx.beginPath();
             ctx.moveTo(55, y + (-33.3333 * i));
-            ctx.lineTo(350, y + (-33.3333 * i));
+            ctx.lineTo(340, y + (-33.3333 * i));
             ctx.stroke();
             ctx.closePath();
             
@@ -308,7 +308,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         // Bottom Legend
         if(ctrl.pastPumpData){
             ctx.fillText(ctrl.pastPumpData.date, 110, 190)
-            ctx.fillText(ctrl.currentPumpData.date, 222, 190)
+            ctx.fillText(ctrl.currentPumpData.date, 230, 190)
         }
         
     }
@@ -321,7 +321,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     const drawWaterTemp = () => {
         let canvas = document.getElementById("watertempchart");
         const ctx = canvas.getContext('2d')
-        canvas.width = 400;
+        canvas.width = 350;
         canvas.height = 250;
         let width = 25 // bar width 
         let X = 32 // first bar position 
@@ -361,7 +361,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             
             ctx.beginPath();
             ctx.moveTo(55, y + (-33.3333 * i));
-            ctx.lineTo(350, y + (-33.3333 * i));
+            ctx.lineTo(340, y + (-33.3333 * i));
             ctx.stroke();
             ctx.closePath();
             
@@ -420,7 +420,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         ctx.fillStyle = '#000000'
         if(ctrl.pastPumpData){
             ctx.fillText(ctrl.pastPumpData.date, 100, 190)
-            ctx.fillText(ctrl.currentPumpData.date, 222, 190)
+            ctx.fillText(ctrl.currentPumpData.date, 235, 190)
         }
     }
 
