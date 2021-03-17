@@ -2,8 +2,8 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     const ctrl = this;
     this.showPdfPreview = false;
     this.currentPumpData = {};
-    // this.pastPumpData = {"Pump 1 Starts": 433, "Pump 2 Starts" : 366, "Pump 1 Total": {h: 117, m: 21, s: 49}, "Pump 2 Total": {h:137, m:41, s:30}, //dummy data
-    //                       "Pump 1 Avrage": {h:0, m:16, s:15}, "Pump 2 Avrage": {h:0, m:22, s:36} } 
+//     this.pastPumpData = {"Pump 1 Starts": 433, "Pump 2 Starts" : 366, "Pump 1 Total": {h: 817, m: 21, s: 49}, "Pump 2 Total": {h:137, m:41, s:30}, //dummy data
+// "Pump 1 Avrage": {h:0, m:16, s:15}, "Pump 2 Avrage": {h:0, m:22, s:36}, sleepTimeTotal:{h:192, m:44, s:26}, date: "Jan 1, 2021", avgTemp: 167, minTemp: 75, maxTemp: 191 } 
     
     this.backToSelectFile = () => ctrl.showPdfPreview = false
     const displayPdfPages = (pump) => {ctrl.includePath = `partials/previews/${pump}.html`, ctrl.showPdfPreview= true}
@@ -70,12 +70,14 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         ctx.fillStyle = '#000000'
         ctx.strokeStyle = 'rgba(0,0,0,.2)'
         for(let i = 0; i < yScale.length; i++){ // set up the y scale 
-            let y = 170
-            ctx.font = '12px serif'; 
-            ctx.fillText(yScale[i], 40 , y + (-33.3333 * i));
-            // console.log(`${yScale[i]} is ${ctx.measureText(yScale[i]).width}px`)
+            let y = 170, f = 12
+
+            if(ctx.measureText(yScale[i]).width >= 49 && yScale[i] !== "0:00:00") f= 11
+            ctx.font = `${f}px serif`; 
+            ctx.fillText(yScale[i], 50 , y + (-33.3333 * i));
+            
             ctx.beginPath();
-            ctx.moveTo(45, y + (-33.3333 * i));
+            ctx.moveTo(55, y + (-33.3333 * i));
             ctx.lineTo(350, y + (-33.3333 * i));
             ctx.stroke();
             ctx.closePath();
@@ -114,9 +116,9 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         // Bottom Legend 
         ctx.font = '12px serif';
         ctx.fillStyle = "#056ee6"
-        ctx.fillRect(120, 220, 10, 10)
+        ctx.fillRect(130, 220, 10, 10)
         ctx.fillStyle = '#000000'
-        ctx.fillText("Pump 1", 135, 229)
+        ctx.fillText("Pump 1", 145, 229)
 
         ctx.fillStyle = "#d97502"
         ctx.fillRect(200, 220, 10, 10)
@@ -124,7 +126,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         ctx.fillText("Pump 2", 215, 229)
 
         if(ctrl.pastPumpData){
-            ctx.fillText("Date 1", 110, 190)
+            ctx.fillText(ctrl.pastPumpData.date, 100, 190)
             ctx.fillText(ctrl.currentPumpData.date, 222, 190)
         }
     }
@@ -256,7 +258,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         /////////// Start Drawing the Canvas /////////////// 
 
         let width = 25 // bar width 
-        let X = 50 // first bar position 
+        let X = 0 // first bar position 
         const title = "Total Sleep Time"
 
         ctx.font = '24px serif'; 
@@ -267,12 +269,14 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         ctx.fillStyle = '#000000'
         ctx.strokeStyle = 'rgba(0,0,0,.2)'
         for(let i = 0; i < yScale.length; i++){ // set up the y scale 
-            let y = 170
-            ctx.font = '12px serif'; 
-            ctx.fillText(yScale[i], 40 , y + (-33.3333 * i));
-            // console.log(`${yScale[i]} is ${ctx.measureText(yScale[i]).width}px`)
+            let y = 170, f = 12
+
+            if(ctx.measureText(yScale[i]).width >= 49 && yScale[i] !== "0:00:00") f= 11
+            ctx.font = `${f}px serif`; 
+            ctx.fillText(yScale[i], 50 , y + (-33.3333 * i));
+            
             ctx.beginPath();
-            ctx.moveTo(45, y + (-33.3333 * i));
+            ctx.moveTo(55, y + (-33.3333 * i));
             ctx.lineTo(350, y + (-33.3333 * i));
             ctx.stroke();
             ctx.closePath();
@@ -288,7 +292,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
 
             
-            ctrl.pastPumpData ? X += 50 : X = canvas.width /2
+            ctrl.pastPumpData ? X += 120 : X = canvas.width /2
             ctx.fillStyle = '#056ee6';
             ctx.fillRect(X , (canvas.height - h)-80, width, h) //making bar
             
@@ -298,17 +302,126 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             ctx.font = '12px serif'; // words on top of bar
             ctx.fillStyle = '#000000'
             ctx.fillText(`${data[i]}`, X + (center), (canvas.height - h)-85);
-            // console.log(center)
 
-            X += 35 // move over for next bar
         }
 
         // Bottom Legend
         if(ctrl.pastPumpData){
-            ctx.fillText("Date 1", 110, 190)
+            ctx.fillText(ctrl.pastPumpData.date, 110, 190)
             ctx.fillText(ctrl.currentPumpData.date, 222, 190)
         }
         
+    }
+
+    // ***************** END *******************************
+    
+    // ================================== //
+    //     Draw the Canvas Water Temp     //
+    // ================================== //
+    const drawWaterTemp = () => {
+        let canvas = document.getElementById("watertempchart");
+        const ctx = canvas.getContext('2d')
+        canvas.width = 400;
+        canvas.height = 250;
+        let width = 25 // bar width 
+        let X = 32 // first bar position 
+
+        /////////// Get the Calcs of the Data ///////////
+        let highNum = 0 , data = [], dataPercentage = []
+
+        if(ctrl.pastPumpData){ // finding out wich numbers are relevent and which is the largest relevent number 
+           data.push(ctrl.pastPumpData.avgTemp);
+           data.push(ctrl.pastPumpData.minTemp);
+           data.push(ctrl.pastPumpData.maxTemp);
+           highNum = ctrl.pastPumpData.maxTemp;
+        }
+        data.push(ctrl.currentPumpData.avgTemp);
+        data.push(ctrl.currentPumpData.minTemp);
+        data.push(ctrl.currentPumpData.maxTemp);
+        if(ctrl.currentPumpData.maxTemp > highNum) highNum = ctrl.currentPumpData.maxTemp; 
+        
+        const yScale = determinYScale(highNum) // getting the y scale 
+
+        for(let i = 0; i < data.length; i++){ dataPercentage.push((data[i] / yScale[yScale.length -1]) * 100) }// turning relevent data into a percentage for the graphs 
+
+        
+        ///////////////// Start Drawing the Chart ////////////////// 
+        const title = "Water Temperature"
+        ctx.font = '24px serif'; 
+        const text = ctx.measureText(title);
+        ctx.fillText(title, (canvas.width - text.width)/2 , 40);
+        
+        ctx.textAlign = "right"
+        ctx.fillStyle = '#000000'
+        ctx.strokeStyle = 'rgba(0,0,0,.2)'
+        for(let i = 0; i < yScale.length; i++){ // set up the y scale 
+            let y = 170
+            ctx.font = `12px serif`; 
+            ctx.fillText(yScale[i], 50 , y + (-33.3333 * i));
+            
+            ctx.beginPath();
+            ctx.moveTo(55, y + (-33.3333 * i));
+            ctx.lineTo(350, y + (-33.3333 * i));
+            ctx.stroke();
+            ctx.closePath();
+            
+        }
+        ctx.textAlign = "start"
+
+
+        for(let i = 0; i < data.length; i++){ // loop through the bars 
+            const h = dataPercentage[i]
+            let t = ctx.measureText(`${data[i]}`);
+            let center = (width - t.width)/2; // calculating the center of the width of pixels for the numbers ontop of the bars
+
+
+            if(i === 0 || i === 3){
+                ctrl.pastPumpData ? X += 47 : X+= 120
+                if(center < 0 ) X += (center -1); // pushing the bars apart if the text overlaps 
+                ctx.fillStyle = '#056ee6';
+                ctx.fillRect(X , (canvas.height - h)-80, width, h) //making bar
+            }
+            else if(i === 1 || i === 4){
+                if(center < 0 ) X +=( Math.abs(center) + 3); // pushing the bars apart if the text overlaps 
+                ctx.fillStyle = '#d97502'
+                ctx.fillRect(X, (canvas.height - h)-80, width, h) //making bar
+            }
+            else{
+                if(center < 0 ) X +=( Math.abs(center) + 3); // pushing the bars apart if the text overlaps 
+                ctx.fillStyle = '#a8a5a5'
+                ctx.fillRect(X, (canvas.height - h)-80, width, h) //making bar
+            }
+
+
+            ctx.font = '12px serif'; // words on top of bar
+            ctx.fillStyle = '#000000'
+            ctx.fillText(`${data[i]}`, X + (center), (canvas.height - h)-85);
+            // console.log(center)
+
+            X += 30 // move over for next bar
+        }
+
+        // Bottom Legend 
+        ctx.font = '12px serif';
+        ctx.fillStyle = '#000000'
+        ctx.fillText("Avg Temp", 85, 229)
+        ctx.fillText("Min Temp", 165, 229)
+        ctx.fillText("Max Temp", 245, 229)
+
+        ctx.fillStyle = "#056ee6"
+        ctx.fillRect(70, 220, 10, 10)
+        
+        ctx.fillStyle = "#d97502"
+        ctx.fillRect(150, 220, 10, 10)
+        
+        ctx.fillStyle = "#a8a5a5"
+        ctx.fillRect(230, 220, 10, 10)       
+        
+        ctx.fillStyle = '#000000'
+        if(ctrl.pastPumpData){
+            ctx.fillText(ctrl.pastPumpData.date, 100, 190)
+            ctx.fillText(ctrl.currentPumpData.date, 222, 190)
+        }
     }
 
     // ***************** END *******************************
@@ -326,6 +439,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         $timeout(()=>drawStartsChart(),50)
         $timeout(()=>drawTotalRuntimeChart(),50)
         $timeout(()=>drawRuntimeAvrgChart(),50)
+        if(ctrl.currentPumpData.type === "condensate") $timeout(()=>drawWaterTemp(),50)
         if(ctrl.currentPumpData.type === "booster") $timeout(()=>drawTotalSleepTime(),50)
         
         console.log(ctrl.currentPumpData)
