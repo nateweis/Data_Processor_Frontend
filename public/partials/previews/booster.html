@@ -1,23 +1,51 @@
-<style>
-    #boosterPdfDiv{
-        border: 1px solid black;
-        text-align: center;
-        width: 850px;
-        height: 4000px;
-    }
-</style>
 
 <h2>This is the booster PDF preview</h2>
 <button ng-click="pdf.backToSelectFile()">Go Back</button>
 <button ng-click="pdf.savePdf()">Save/Send PDF</button>
 
-<div id="boosterPdfDiv">
+
+
+<div id="boosterPdfDiv" class="pdfDiv">
     <img class="waterLogo" src="../../img/Water logo.png" alt="">
+    <h3 class="scada">SCADA</h3>
     <h3>Customer Title and Address</h3>
-    <div class="blueRibbin"><h3>Report Title and Date</h3></div>
+    <div class="blueRibbin"><h3>Report Title and</h3></div>
 
     <canvas id="startschart"></canvas>
     <canvas id="totalrunchart"></canvas>
     <canvas id="avrgrunchart"></canvas>
     <canvas id="sleeptimechart"></canvas>
+
+    <table class="booster-faults">
+        <tr>
+            <th></th>
+            <th>High Pressure</th>
+            <th>Low Suction </th>
+            <th>VFD 1</th>
+            <th>VFD 2</th>
+        </tr>
+        <tr>
+            <td>Faults</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <th></th>
+            <th>All Pumps Running</th>
+            <th>Sleep Mode</th>
+        </tr>
+        <tr>
+            <td>Count</td>
+            <td>0</td>
+            <td>{{pdf.currentPumpData.sleepCount}}</td>
+        </tr>
+    </table>
+
+    <p class="thanku">Thank you for being a US Pump Corp customer!</p>
+    <p>US Pump Corp </p>
 </div>

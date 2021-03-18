@@ -62,7 +62,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         let width = 25 // bar width 
         let X = 50 // first bar position 
 
-        ctx.font = '24px serif'; 
+        ctx.font = '24px calibri'; 
         const text = ctx.measureText(title);
         ctx.fillText(title, (canvas.width - text.width)/2 , 40);
         
@@ -70,10 +70,10 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         ctx.fillStyle = '#000000'
         ctx.strokeStyle = 'rgba(0,0,0,.2)'
         for(let i = 0; i < yScale.length; i++){ // set up the y scale 
-            let y = 170, f = 12
+            let y = 170, f = 13
 
             if(ctx.measureText(yScale[i]).width >= 49 && yScale[i] !== "0:00:00") f= 11
-            ctx.font = `${f}px serif`; 
+            ctx.font = `bold 12px serif`; 
             ctx.fillText(yScale[i], 50 , y + (-33.3333 * i));
             
             ctx.beginPath();
@@ -90,22 +90,24 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             const h = dataPercentage[i]
             let t = ctx.measureText(`${data[i]}`);
             let center = (width - t.width)/2; // calculating the center of the width of pixels for the numbers ontop of the bars
-
+            
 
             if(i % 2 === 0){
                 ctrl.pastPumpData ? X += 50 : X+= 120
-                if(center < 0 ) X += (center -1); // pushing the bars apart if the text overlaps 
-                ctx.fillStyle = '#056ee6';
+                if(center < -10 ) X += (center -10); // pushing the bars apart if the text overlaps 
+                else if(center < 0 ) X += (center -3); 
+                ctx.fillStyle = '#5e74b1';
                 ctx.fillRect(X , (canvas.height - h)-80, width, h) //making bar
             }
             else{
-                if(center < 0 ) X +=( Math.abs(center) + 3); // pushing the bars apart if the text overlaps 
+                if(center < -10 ) X +=( Math.abs(center) + 12); // pushing the bars apart if the text overlaps 
+                else if(center < 0 ) X +=( Math.abs(center) + 5);  
                 ctx.fillStyle = '#d97502'
                 ctx.fillRect(X, (canvas.height - h)-80, width, h) //making bar
             }
 
 
-            ctx.font = '12px serif'; // words on top of bar
+            ctx.font = 'bold 14px serif'; // words on top of bar
             ctx.fillStyle = '#000000'
             ctx.fillText(`${data[i]}`, X + (center), (canvas.height - h)-85);
             // console.log(center)
@@ -114,8 +116,8 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         }
 
         // Bottom Legend 
-        ctx.font = '12px serif';
-        ctx.fillStyle = "#056ee6"
+        ctx.font = 'bold 14px calibri';
+        ctx.fillStyle = "#5e74b1"
         ctx.fillRect(130, 220, 10, 10)
         ctx.fillStyle = '#000000'
         ctx.fillText("Pump 1", 145, 229)
@@ -261,7 +263,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         let X = 0 // first bar position 
         const title = "Total Sleep Time"
 
-        ctx.font = '24px serif'; 
+        ctx.font = '24px calibri'; 
         const text = ctx.measureText(title);
         ctx.fillText(title, (canvas.width - text.width)/2 , 40);
         
@@ -272,7 +274,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             let y = 170, f = 12
 
             if(ctx.measureText(yScale[i]).width >= 49 && yScale[i] !== "0:00:00") f= 11
-            ctx.font = `${f}px serif`; 
+            ctx.font = `bold 12px serif`; 
             ctx.fillText(yScale[i], 50 , y + (-33.3333 * i));
             
             ctx.beginPath();
@@ -293,19 +295,20 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
             
             ctrl.pastPumpData ? X += 120 : X = canvas.width /2
-            ctx.fillStyle = '#056ee6';
+            ctx.fillStyle = '#5e74b1';
             ctx.fillRect(X , (canvas.height - h)-80, width, h) //making bar
             
            
 
 
-            ctx.font = '12px serif'; // words on top of bar
+            ctx.font = 'bold 14px serif'; // words on top of bar
             ctx.fillStyle = '#000000'
             ctx.fillText(`${data[i]}`, X + (center), (canvas.height - h)-85);
 
         }
 
         // Bottom Legend
+        ctx.font = 'bold 14px calibri';
         if(ctrl.pastPumpData){
             ctx.fillText(ctrl.pastPumpData.date, 110, 190)
             ctx.fillText(ctrl.currentPumpData.date, 230, 190)
@@ -347,7 +350,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         
         ///////////////// Start Drawing the Chart ////////////////// 
         const title = "Water Temperature"
-        ctx.font = '24px serif'; 
+        ctx.font = '24px calibri'; 
         const text = ctx.measureText(title);
         ctx.fillText(title, (canvas.width - text.width)/2 , 40);
         
@@ -356,7 +359,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         ctx.strokeStyle = 'rgba(0,0,0,.2)'
         for(let i = 0; i < yScale.length; i++){ // set up the y scale 
             let y = 170
-            ctx.font = `12px serif`; 
+            ctx.font = `bold 12px serif`; 
             ctx.fillText(yScale[i], 50 , y + (-33.3333 * i));
             
             ctx.beginPath();
@@ -378,7 +381,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             if(i === 0 || i === 3){
                 ctrl.pastPumpData ? X += 47 : X+= 120
                 if(center < 0 ) X += (center -1); // pushing the bars apart if the text overlaps 
-                ctx.fillStyle = '#056ee6';
+                ctx.fillStyle = '#5e74b1';
                 ctx.fillRect(X , (canvas.height - h)-80, width, h) //making bar
             }
             else if(i === 1 || i === 4){
@@ -393,7 +396,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             }
 
 
-            ctx.font = '12px serif'; // words on top of bar
+            ctx.font = 'bold 14px serif'; // words on top of bar
             ctx.fillStyle = '#000000'
             ctx.fillText(`${data[i]}`, X + (center), (canvas.height - h)-85);
             // console.log(center)
@@ -402,13 +405,13 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         }
 
         // Bottom Legend 
-        ctx.font = '12px serif';
+        ctx.font = 'bold 14px calibri';
         ctx.fillStyle = '#000000'
         ctx.fillText("Avg Temp", 85, 229)
         ctx.fillText("Min Temp", 165, 229)
         ctx.fillText("Max Temp", 245, 229)
 
-        ctx.fillStyle = "#056ee6"
+        ctx.fillStyle = "#5e74b1"
         ctx.fillRect(70, 220, 10, 10)
         
         ctx.fillStyle = "#d97502"
@@ -436,13 +439,15 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     const makeIntoPdf = (dataObj) => {
         $timeout(()=>displayPdfPages(dataObj.type) )   
         ctrl.currentPumpData = dataObj;
-        $timeout(()=>drawStartsChart(),50)
-        $timeout(()=>drawTotalRuntimeChart(),50)
-        $timeout(()=>drawRuntimeAvrgChart(),50)
-        if(ctrl.currentPumpData.type === "condensate") $timeout(()=>drawWaterTemp(),50)
-        if(ctrl.currentPumpData.type === "booster") $timeout(()=>drawTotalSleepTime(),50)
+        $timeout(()=>drawStartsChart(),100)
+        $timeout(()=>drawTotalRuntimeChart(),100)
+        $timeout(()=>drawRuntimeAvrgChart(),100)
+        if(ctrl.currentPumpData.type === "condensate") $timeout(()=>drawWaterTemp(),100)
+        if(ctrl.currentPumpData.type === "booster") $timeout(()=>drawTotalSleepTime(),100)
         
-        console.log(ctrl.currentPumpData)
+        // console.log(ctrl.currentPumpData)
+        let strVer = JSON.stringify(ctrl.currentPumpData) //use stringify so itll save in the database
+        console.log(JSON.parse(strVer)) //use parse to convert back to obj to use 
     }
 
     // ================================== //
@@ -509,13 +514,13 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
     this.savePdf = () => {
         const e = document.getElementById(`${ctrl.currentPumpData.type}PdfDiv`)
-
-        html2canvas(e).then(canvas => {
+       
+        html2canvas(e,{scale: 2}).then(canvas => {
             const imgData = canvas.toDataURL('image/png')
             const doc = new jspdf.jsPDF()
             const imgHeight = canvas.height * 210 / canvas.width
-            // console.log(imgHeight)
-            doc.addImage(imgData, 0, 0, 210, imgHeight)
+            // console.log(imgData)
+            doc.addImage(imgData, 0, 0, 210, imgHeight -30)
             doc.save("newPdf.pdf")
         })
     }
@@ -523,6 +528,5 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
     // ******************* END *****************************
     
-
 
 }]

@@ -1,15 +1,75 @@
-*{margin: 0px; padding: 0px;}
+*{margin: 0px; padding: 0px; font-family: 'calibri';}
 h3{
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+p{
     margin-top: 10px;
+    font-size: 24px;
+    font-weight: bold;
 }
 canvas{
     border: 1px solid rgba(0,0,0,.1);
     margin: 20px 27px;
 }
+table{
+    display: block;
+    width: 50%;
+    margin: 10px auto;
+}
+tr{
+    width: 100%;
+}
+th{
+    font-size: 24px;
+}
+td{
+    font-size: 20px;
+}
+th, td{
+    width: 149.33333333333px;
+}
+table, th, td{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+.booster-faults tr th, .booster-faults tr td{
+    width: 20%;
+}
 .waterLogo{
     width: 90%;
     margin-top: 50px;
 }
+.scada{
+    position: absolute;
+    font-weight: bold;
+    font-size: 26px;
+    right: 60px;
+    top: 240px;
+}
 .blueRibbin{
-    background-color: rgb(131, 167, 179);
+    background-color: rgb(123, 149, 222);
+    /* border: 1px solid black; */
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    margin: 10px 0;
+}
+
+.blueRibbin h3{
+    color: #ffffff;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-weight: normal;
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+.pdfDiv{
+    position: relative;
+    border: 1px solid black;
+    text-align: center;
+    width: 900px;
+    height: 1500px;
+}
+.thanku{
+    margin-top: 50px;
 }
