@@ -13,6 +13,9 @@ app.use(express.static('public'));
 const pdfController = require('./controllers/pdfRoutes');
 app.use('/pdf', pdfController)
 
+const systController = require('./controllers/systemRoutes');
+app.use('/system', systController);
+
 
 // port listener 
 app.listen(port, () => {

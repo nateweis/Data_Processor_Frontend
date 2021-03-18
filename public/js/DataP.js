@@ -1,6 +1,6 @@
 
 
-export const dp = ['$http', '$scope', 'DataProcessingService', function($http, $scope, DataProcessingService){
+export const dp = ['$http','$window', '$scope', 'DataProcessingService', function($http, $window, $scope, DataProcessingService){
     const ctrl = this; 
     
     this.finalProcessedObject = {}
@@ -8,8 +8,11 @@ export const dp = ['$http', '$scope', 'DataProcessingService', function($http, $
         type: "other"
     };
    
-
-
+    $window.onload = () => {
+        $http({method:'GET', url: 'http://localhost:3005/system'})
+        .then(res => console.log(res))
+        .catch(err => console.log(err))
+    }
 
 
 
