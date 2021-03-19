@@ -18,7 +18,7 @@
     <span ng-if="pdf.showPdfPreview === false">
         <select name="system" ng-model="dp.system" ng-change="dp.filterSystemData()">
             <option value="">Select A System</option>
-            <option ng-repeat="system in dp.sytemsArr" value="{{system.id}}">{{system.name}}</option>
+            <option ng-repeat="system in dp.sytemsArr" value="{{system}}">{{system.name}}</option>
         </select>
 
         <input type="file" id="fileBtn">

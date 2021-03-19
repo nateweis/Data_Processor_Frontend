@@ -1,6 +1,7 @@
 export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScope, $timeout){
     const ctrl = this;
     this.showPdfPreview = false;
+    this.systemDisplayed = {};
     this.currentPumpData = {};
     this.pastPumpData = {"Pump 1 Starts": 433, "Pump 2 Starts" : 366, "Pump 1 Total": {h: 117, m: 21, s: 49}, "Pump 2 Total": {h:137, m:41, s:30}, //dummy data
 "Pump 1 Avrage": {h:0, m:16, s:15}, "Pump 2 Avrage": {h:0, m:22, s:36}, sleepTimeTotal:{h:192, m:44, s:26}, date: "Jan 2021", avgTemp: 167, minTemp: 75, maxTemp: 191 } 
@@ -437,15 +438,16 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     $rootScope.$on('makePdf', (event, data)=> makeIntoPdf(data))
     
     const makeIntoPdf = (dataObj) => {
-        $timeout(()=>displayPdfPages(dataObj.type) )   
-        ctrl.currentPumpData = dataObj;
+        $timeout(()=>displayPdfPages(dataObj[0].type) )   
+        ctrl.currentPumpData = dataObj[0];
         $timeout(()=>drawStartsChart(),100)
         $timeout(()=>drawTotalRuntimeChart(),100)
         $timeout(()=>drawRuntimeAvrgChart(),100)
-        if(ctrl.currentPumpData.type === "condensate") $timeout(()=>drawWaterTemp(),100)
-        if(ctrl.currentPumpData.type === "booster") $timeout(()=>drawTotalSleepTime(),100)
+        if(ctrl.currentPumpData.type === "Condensate") $timeout(()=>drawWaterTemp(),100)
+        if(ctrl.currentPumpData.type === "Booster") $timeout(()=>drawTotalSleepTime(),100)
         
-        // console.log(ctrl.currentPumpData)
+        ctrl.systemDisplayed = dataObj[1]
+
         let strVer = JSON.stringify(ctrl.currentPumpData) //use stringify so itll save in the database
         console.log(JSON.parse(strVer)) //use parse to convert back to obj to use 
     }
@@ -521,7 +523,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             const imgHeight = canvas.height * 210 / canvas.width
             // console.log(imgData)
             doc.addImage(imgData, 0, 0, 210, imgHeight -30)
-            doc.save("newPdf.pdf")
+            doc.save(`${ctrl.systemDisplayed.name} ${ctrl.currentPumpData.date} Monthly Report ${ctrl.currentPumpData.type}.pdf`)
         })
     }
 

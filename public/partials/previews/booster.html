@@ -5,11 +5,11 @@
 
 
 
-<div id="boosterPdfDiv" class="pdfDiv">
+<div id="BoosterPdfDiv" class="pdfDiv">
     <img class="waterLogo" src="../../img/Water logo.png" alt="">
     <h3 class="scada">SCADA</h3>
-    <h3>Customer Title and Address</h3>
-    <div class="blueRibbin"><h3>Report Title and</h3></div>
+    <h3>{{dp.selectedSystem.name}} - {{dp.selectedSystem.address}}</h3>
+    <div class="blueRibbin"><h3>Booster Monthly Report - {{pdf.currentPumpData.date}} </h3></div>
 
     <canvas id="startschart"></canvas>
     <canvas id="totalrunchart"></canvas>

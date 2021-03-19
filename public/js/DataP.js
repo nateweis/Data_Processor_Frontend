@@ -4,6 +4,7 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
     const ctrl = this; 
     
     this.finalProcessedObject = {}
+    this.selectedSystem = {}
     this.sytemsArr = []
     $scope.pumps = {
         type: "other"
@@ -55,21 +56,21 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
             const last = temp.length -1
             sk.push(temp[last])
         }
-        if(sk.indexOf("High Pressure Fault") > 0) $scope.pumps.type = "booster"
-        else if(sk.indexOf("Over Temp Fault") > 0) $scope.pumps.type = "condensate"
-        else if(sk.indexOf("Low Level Alarm") > 0) $scope.pumps.type = "tankfill"
-        else $scope.pumps.type = "sewer"
+        if(sk.indexOf("High Pressure Fault") > 0) $scope.pumps.type = "Booster"
+        else if(sk.indexOf("Over Temp Fault") > 0) $scope.pumps.type = "Condensate"
+        else if(sk.indexOf("Low Level Alarm") > 0) $scope.pumps.type = "TankFill"
+        else $scope.pumps.type = "Sewer"
 
         
-        if($scope.pumps.type === "booster") ctrl.processSleep(rows)
-        if($scope.pumps.type === "condensate") ctrl.processTemp(rows)
+        if($scope.pumps.type === "Booster") ctrl.processSleep(rows)
+        if($scope.pumps.type === "Condensate") ctrl.processTemp(rows)
         ctrl.processAlarms(rows)
         ctrl.processRuntimes(rows) 
         
         // console.log(ctrl.finalProcessedObject)
         ctrl.finalProcessedObject.date = dateArr[0] + " " + dateArr[2]
         ctrl.finalProcessedObject = {...ctrl.finalProcessedObject, ...$scope.pumps}
-        DataProcessingService.activateMakePdf(ctrl.finalProcessedObject)
+        DataProcessingService.activateMakePdf([ctrl.finalProcessedObject, ctrl.selectedSystem])
     }
 
     // ================================== //
@@ -77,7 +78,7 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
     // ================================== // 
 
     this.filterSystemData = () => {
-        ctrl.sytemsArr.forEach(s => {if(s.id === parseInt(ctrl.system)) console.log(s)})
+        if(ctrl.system) ctrl.selectedSystem = JSON.parse(ctrl.system)
     }
 
 
