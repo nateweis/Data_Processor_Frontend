@@ -4,13 +4,14 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
     const ctrl = this; 
     
     this.finalProcessedObject = {}
+    this.sytemsArr = []
     $scope.pumps = {
         type: "other"
     };
    
     $window.onload = () => {
         $http({method:'GET', url: 'http://localhost:3005/system'})
-        .then(res => console.log(res))
+        .then(res => this.sytemsArr = res.data.pulledData)
         .catch(err => console.log(err))
     }
 
@@ -36,10 +37,7 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
         return {h: hr, m: min, s: sec}
     }
 
-    // lets the next button be available 
-    this.didStep = () => {
-        // console.log($scope.pumps.type)
-    }
+    
 
     // ****************************** END OF HELPER fUNCTIONS FUNCTION **************************************** ///
 
@@ -72,6 +70,14 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
         ctrl.finalProcessedObject.date = dateArr[0] + " " + dateArr[2]
         ctrl.finalProcessedObject = {...ctrl.finalProcessedObject, ...$scope.pumps}
         DataProcessingService.activateMakePdf(ctrl.finalProcessedObject)
+    }
+
+    // ================================== //
+    //     Filtering the System Data      //
+    // ================================== // 
+
+    this.filterSystemData = () => {
+        ctrl.sytemsArr.forEach(s => {if(s.id === parseInt(ctrl.system)) console.log(s)})
     }
 
 
@@ -358,20 +364,25 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
         const myFile = document.getElementById("fileBtn");
         // console.log(myFile.files[0])
 
-        let reader = new FileReader()
-        reader.readAsBinaryString(myFile.files[0])
-        reader.onload = (e) => {
-            let data = e.target.result
-            let wb = XLSX.read(data, {type: "binary"})
-            wb.SheetNames.forEach(sheet => {
-                let rowObj = XLSX.utils.sheet_to_row_object_array(wb.Sheets[sheet])
-                // console.log(rowObj)
-                ctrl.excelFileProcessing(rowObj)
-                
-            })
-
-            // console.log(wb)
+        if(ctrl.system && myFile.files[0]){
+            let reader = new FileReader()
+            reader.readAsBinaryString(myFile.files[0])
+            reader.onload = (e) => {
+                let data = e.target.result
+                let wb = XLSX.read(data, {type: "binary"})
+                wb.SheetNames.forEach(sheet => {
+                    let rowObj = XLSX.utils.sheet_to_row_object_array(wb.Sheets[sheet])
+                    // console.log(rowObj)
+                    ctrl.excelFileProcessing(rowObj)
+                    
+                })
+    
+                // console.log(wb)
+            }
         }
+        else if(!myFile.files[0]) alert("Please Select A File")
+        else if(!ctrl.system) alert("Please Select A System")
+
     }
 
 

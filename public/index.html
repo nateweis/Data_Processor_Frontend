@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Data Processor</title>
     <link rel="stylesheet" href="./css/style.css">
-    
+
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.8/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
@@ -16,7 +16,12 @@
 <div ng-controller="PdfController as pdf"> 
 
     <span ng-if="pdf.showPdfPreview === false">
-        <input type="file" id="fileBtn" ng-click="dp.didStep()">
+        <select name="system" ng-model="dp.system" ng-change="dp.filterSystemData()">
+            <option value="">Select A System</option>
+            <option ng-repeat="system in dp.sytemsArr" value="{{system.id}}">{{system.name}}</option>
+        </select>
+
+        <input type="file" id="fileBtn">
         <button ng-click="dp.showFile()">Show File</button>
     </span>
 
