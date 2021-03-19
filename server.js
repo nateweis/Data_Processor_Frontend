@@ -10,8 +10,8 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // controllers 
-const pdfController = require('./controllers/pdfRoutes');
-app.use('/pdf', pdfController)
+const dataController = require('./controllers/dataRoutes');
+app.use('/data', dataController)
 
 const systController = require('./controllers/systemRoutes');
 app.use('/system', systController);

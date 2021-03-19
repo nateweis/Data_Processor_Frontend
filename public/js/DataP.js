@@ -356,6 +356,21 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
 
     // ****************************** END OF PROCESS TEMPURATURE FUNCTION **************************************** ///
 
+    // ================================== //
+    //       Save the Processed Data      //
+    // ================================== //  
+
+    this.saveData = () => {
+        const obj = {
+            customer_id : ctrl.selectedSystem.id,
+            type: ctrl.finalProcessedObject.type,
+            data: JSON.stringify(ctrl.finalProcessedObject)
+        }
+        $http({method:'POST', url: '/data', data: obj})
+        .then(res => alert(res.data.message))
+        .catch(err => console.log(err))
+    }
+
 
     // ================================================================================================================================ //
     //                                     THIS IS THE START OF THE DATA PROCESSING PROCESS                                            //

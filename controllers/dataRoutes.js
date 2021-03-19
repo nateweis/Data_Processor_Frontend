@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router();
-const Pdfs = require('../models/pdf')
+const Data = require('../models/data')
 
-router.post('/', Pdfs.makePdf)
+router.post('/', Data.saveData)
 
 module.exports = router
