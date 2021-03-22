@@ -6,6 +6,13 @@ const saveData = (req, res) => {
     .catch(err => res.json({message: "ERR On Data Save", err, status: 402}))
 }
 
+const getData = (req, res) => {
+    db.any('SELECT * FROM data')
+    .then(data => res.json({message: "The Data Has Been Sent", status: 200, pulledData: data}))
+    .catch(err => res.json({message: "ERR on sending the data over ", status: 402, err}))
+}
+
 module.exports = {
-    saveData
+    saveData,
+    getData
 }

@@ -23,6 +23,11 @@
 
         <input type="file" id="fileBtn">
         <button ng-click="dp.showFile()">Show File</button>
+
+        <br><br>
+        <ul>
+            <li ng-repeat="pdata in dp.pastDataArr" ng-click="dp.pastDataSelect(pdata)" > {{pdata.made_at.split("T")[0]}} </li>
+        </ul>
     </span>
 
     <span ng-if="pdf.showPdfPreview">

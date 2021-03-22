@@ -3,8 +3,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     this.showPdfPreview = false;
     this.systemDisplayed = {};
     this.currentPumpData = {};
-    this.pastPumpData = {"Pump 1 Starts": 433, "Pump 2 Starts" : 366, "Pump 1 Total": {h: 117, m: 21, s: 49}, "Pump 2 Total": {h:137, m:41, s:30}, //dummy data
-"Pump 1 Avrage": {h:0, m:16, s:15}, "Pump 2 Avrage": {h:0, m:22, s:36}, sleepTimeTotal:{h:192, m:44, s:26}, date: "Jan 2021", avgTemp: 167, minTemp: 75, maxTemp: 191 } 
+    this.pastPumpData = {}; 
     
     this.backToSelectFile = () => ctrl.showPdfPreview = false
     const displayPdfPages = (pump) => {ctrl.includePath = `partials/previews/${pump}.html`, ctrl.showPdfPreview= true}
@@ -94,7 +93,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             
 
             if(i % 2 === 0){
-                ctrl.pastPumpData ? X += 50 : X+= 120
+                ctrl.pastPumpData.date ? X += 50 : X+= 120
                 if(center < -10 ) X += (center -10); // pushing the bars apart if the text overlaps 
                 else if(center < 0 ) X += (center -3); 
                 ctx.fillStyle = '#5e74b1';
@@ -128,7 +127,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         ctx.fillStyle = '#000000'
         ctx.fillText("Pump 2", 215, 229)
 
-        if(ctrl.pastPumpData){
+        if(ctrl.pastPumpData.date){
             ctx.fillText(ctrl.pastPumpData.date, 104, 190)
             ctx.fillText(ctrl.currentPumpData.date, 224, 190)
         }
@@ -172,7 +171,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     const drawStartsChart = () => {
         let highNum = 0 , data = [], dataPercentage = []
 
-        if(ctrl.pastPumpData){ // finding out wich numbers are relevent and which is the largest relevent number 
+        if(ctrl.pastPumpData.date){ // finding out wich numbers are relevent and which is the largest relevent number 
             const sk2 = Object.keys(ctrl.pastPumpData)
             sk2.forEach(k => {
                 const ar = k.split(" ") 
@@ -295,7 +294,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
 
             
-            ctrl.pastPumpData ? X += 120 : X = canvas.width /2
+            ctrl.pastPumpData.date ? X += 120 : X = canvas.width /2
             ctx.fillStyle = '#5e74b1';
             ctx.fillRect(X , (canvas.height - h)-80, width, h) //making bar
             
@@ -310,7 +309,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
         // Bottom Legend
         ctx.font = 'bold 14px calibri';
-        if(ctrl.pastPumpData){
+        if(ctrl.pastPumpData.date){
             ctx.fillText(ctrl.pastPumpData.date, 110, 190)
             ctx.fillText(ctrl.currentPumpData.date, 230, 190)
         }
@@ -333,7 +332,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         /////////// Get the Calcs of the Data ///////////
         let highNum = 0 , data = [], dataPercentage = []
 
-        if(ctrl.pastPumpData){ // finding out wich numbers are relevent and which is the largest relevent number 
+        if(ctrl.pastPumpData.date){ // finding out wich numbers are relevent and which is the largest relevent number 
            data.push(ctrl.pastPumpData.avgTemp);
            data.push(ctrl.pastPumpData.minTemp);
            data.push(ctrl.pastPumpData.maxTemp);
@@ -380,7 +379,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
 
             if(i === 0 || i === 3){
-                ctrl.pastPumpData ? X += 47 : X+= 120
+                ctrl.pastPumpData.date ? X += 47 : X+= 120
                 if(center < 0 ) X += (center -1); // pushing the bars apart if the text overlaps 
                 ctx.fillStyle = '#5e74b1';
                 ctx.fillRect(X , (canvas.height - h)-80, width, h) //making bar
@@ -422,7 +421,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         ctx.fillRect(230, 220, 10, 10)       
         
         ctx.fillStyle = '#000000'
-        if(ctrl.pastPumpData){
+        if(ctrl.pastPumpData.date){
             ctx.fillText(ctrl.pastPumpData.date, 100, 190)
             ctx.fillText(ctrl.currentPumpData.date, 235, 190)
         }
@@ -440,6 +439,8 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     const makeIntoPdf = (dataObj) => {
         $timeout(()=>displayPdfPages(dataObj[0].type) )   
         ctrl.currentPumpData = dataObj[0];
+        ctrl.pastPumpData = dataObj[2];
+        
         $timeout(()=>drawStartsChart(),100)
         $timeout(()=>drawTotalRuntimeChart(),100)
         $timeout(()=>drawRuntimeAvrgChart(),100)
@@ -458,7 +459,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     const processTime = (str) => {
         let highNum = 0, timePlace = 0, data =[], rawTime=[]
 
-        if(ctrl.pastPumpData){ // finding out wich numbers are relevent and which is the largest relevent number 
+        if(ctrl.pastPumpData.date){ // finding out wich numbers are relevent and which is the largest relevent number 
             const sk2 = Object.keys(ctrl.pastPumpData)
             sk2.forEach(k => {
                 const ar = k.split(" ") 

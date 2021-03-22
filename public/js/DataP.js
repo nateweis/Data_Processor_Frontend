@@ -5,6 +5,8 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
     
     this.finalProcessedObject = {}
     this.selectedSystem = {}
+    this.selectedPastData = {}
+    this.pastDataArr = []
     this.sytemsArr = []
     $scope.pumps = {
         type: "other"
@@ -12,7 +14,12 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
    
     $window.onload = () => {
         $http({method:'GET', url: 'http://localhost:3005/system'})
-        .then(res => this.sytemsArr = res.data.pulledData)
+        .then(res => {
+            this.sytemsArr = res.data.pulledData;
+            $http({method:'GET', url:'/data'})
+            .then(data => ctrl.pastDataArr = data.data.pulledData)
+            .catch(err => console.log(err))
+        })
         .catch(err => console.log(err))
     }
 
@@ -70,7 +77,8 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
         // console.log(ctrl.finalProcessedObject)
         ctrl.finalProcessedObject.date = dateArr[0] + " " + dateArr[2]
         ctrl.finalProcessedObject = {...ctrl.finalProcessedObject, ...$scope.pumps}
-        DataProcessingService.activateMakePdf([ctrl.finalProcessedObject, ctrl.selectedSystem])
+        DataProcessingService.activateMakePdf([ctrl.finalProcessedObject, ctrl.selectedSystem, ctrl.selectedPastData])
+        ctrl.selectedPastData = {}
     }
 
     // ================================== //
@@ -78,6 +86,7 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
     // ================================== // 
 
     this.filterSystemData = () => {
+        ctrl.selectedPastData = {};
         if(ctrl.system) ctrl.selectedSystem = JSON.parse(ctrl.system)
     }
 
@@ -371,6 +380,12 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
         .catch(err => console.log(err))
     }
 
+    // ================================== //
+    //          Select Past Data          //
+    // ================================== //  
+    this.pastDataSelect = (data) => {
+        ctrl.selectedPastData = JSON.parse(data.data)
+    }
 
     // ================================================================================================================================ //
     //                                     THIS IS THE START OF THE DATA PROCESSING PROCESS                                            //
