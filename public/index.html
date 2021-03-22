@@ -26,7 +26,7 @@
 
         <br><br>
         <ul>
-            <li ng-repeat="pdata in dp.pastDataArr" ng-click="dp.pastDataSelect(pdata)" class="{{pdata.id === dp.currentSelected? 'highlight': ''}}" >
+            <li ng-repeat="pdata in dp.pastDataArr | filter: dp.filterSystem" ng-click="dp.pastDataSelect(pdata)" class="{{pdata.id === dp.currentSelected? 'highlight': ''}}" >
                  {{pdata.made_at.split("T")[0]}} === {{pdata.type}} 
             </li>
         </ul>

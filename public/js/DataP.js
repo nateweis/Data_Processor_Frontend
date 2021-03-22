@@ -4,6 +4,7 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
     const ctrl = this; 
     
     this.currentSelected = 0;
+    this.filterSystem = {customer_id:0};
     this.finalProcessedObject = {}
     this.selectedSystem = {}
     this.selectedPastData = {}
@@ -88,7 +89,8 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
 
     this.filterSystemData = () => {
         ctrl.selectedPastData = {};
-        if(ctrl.system) ctrl.selectedSystem = JSON.parse(ctrl.system)
+        if(ctrl.system) ctrl.selectedSystem = JSON.parse(ctrl.system);
+        ctrl.filterSystem.customer_id = ctrl.selectedSystem.id;
     }
 
 
