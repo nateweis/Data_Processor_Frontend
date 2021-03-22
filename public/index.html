@@ -25,6 +25,12 @@
         <button ng-click="dp.showFile()">Show File</button>
 
         <br><br>
+        <div ng-if="dp.selectedSystem.name">
+            <h3> {{dp.selectedSystem.company}}/{{dp.selectedSystem.name}}</h3>
+            <h4>Past System Data</h4>
+            <hr>
+        </div>
+
         <ul>
             <li ng-repeat="pdata in dp.pastDataArr | filter: dp.filterSystem" ng-click="dp.pastDataSelect(pdata)" class="{{pdata.id === dp.currentSelected? 'highlight': ''}}" >
                  {{pdata.made_at.split("T")[0]}} === {{pdata.type}} 

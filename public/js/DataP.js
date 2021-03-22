@@ -80,7 +80,6 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
         ctrl.finalProcessedObject.date = dateArr[0] + " " + dateArr[2]
         ctrl.finalProcessedObject = {...ctrl.finalProcessedObject, ...$scope.pumps}
         DataProcessingService.activateMakePdf([ctrl.finalProcessedObject, ctrl.selectedSystem, ctrl.selectedPastData])
-        ctrl.selectedPastData = {}
     }
 
     // ================================== //
@@ -89,8 +88,11 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
 
     this.filterSystemData = () => {
         ctrl.selectedPastData = {};
-        if(ctrl.system) ctrl.selectedSystem = JSON.parse(ctrl.system);
-        ctrl.filterSystem.customer_id = ctrl.selectedSystem.id;
+        if(ctrl.system) {
+            const ssys = JSON.parse(ctrl.system);
+            ctrl.selectedSystem = ssys;
+            ctrl.filterSystem.customer_id = ctrl.selectedSystem.id;
+        }
     }
 
 

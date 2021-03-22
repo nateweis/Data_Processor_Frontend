@@ -43,6 +43,18 @@ table, th, td{
     border: 1px solid black;
     border-collapse: collapse;
 }
+.p1{
+    background-color: rgb(123, 149, 222);
+}
+.p2{
+    background-color: coral;
+}
+.sewer-highAlrm{
+    width: 298.6666666666666px;
+}
+.tankfill-faultstr th, .tankfill-faultstr td{
+    width: 25%;
+}
 .booster-faults tr th, .booster-faults tr td{
     width: 20%;
 }

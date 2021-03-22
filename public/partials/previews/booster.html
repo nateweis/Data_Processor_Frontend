@@ -26,10 +26,10 @@
         </tr>
         <tr>
             <td>Faults</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            <td>{{pdf.currentPumpData["High Pressure Fault"]}}</td>
+            <td>{{pdf.currentPumpData["Low Suction Fault"]}}</td>
+            <td>{{pdf.currentPumpData["VFD 1 Fault"]}}</td>
+            <td>{{pdf.currentPumpData["VFD 2 Fault"]}}</td>
         </tr>
     </table>
 
@@ -41,7 +41,7 @@
         </tr>
         <tr>
             <td>Count</td>
-            <td>0</td>
+            <td>{{pdf.currentPumpData.bothRunningCount}}</td>
             <td>{{pdf.currentPumpData.sleepCount}}</td>
         </tr>
     </table>

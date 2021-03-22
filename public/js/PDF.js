@@ -93,7 +93,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             
 
             if(i % 2 === 0){
-                ctrl.pastPumpData.date ? X += 50 : X+= 120
+                ctrl.pastPumpData.date ? X += 50 : X+= 110
                 if(center < -10 ) X += (center -10); // pushing the bars apart if the text overlaps 
                 else if(center < 0 ) X += (center -3); 
                 ctx.fillStyle = '#5e74b1';
