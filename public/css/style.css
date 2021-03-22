@@ -1,4 +1,14 @@
 *{margin: 0px; padding: 0px; font-family: 'calibri';}
+li{
+    cursor: pointer;
+    border: 1px solid black;
+}
+li:hover{
+    font-weight: bold;
+}
+.highlight{
+    background-color: rgba(210, 207, 30, 0.596);
+}
 h3{
     margin-top: 15px;
     margin-bottom: 15px;

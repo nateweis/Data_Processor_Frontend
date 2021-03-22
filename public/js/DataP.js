@@ -3,6 +3,7 @@
 export const dp = ['$http','$window', '$scope', 'DataProcessingService', function($http, $window, $scope, DataProcessingService){
     const ctrl = this; 
     
+    this.currentSelected = 0;
     this.finalProcessedObject = {}
     this.selectedSystem = {}
     this.selectedPastData = {}
@@ -384,7 +385,14 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
     //          Select Past Data          //
     // ================================== //  
     this.pastDataSelect = (data) => {
-        ctrl.selectedPastData = JSON.parse(data.data)
+        if(ctrl.currentSelected !== data.id){
+            ctrl.selectedPastData = JSON.parse(data.data)
+            ctrl.currentSelected = data.id
+        }
+        else{
+            ctrl.selectedPastData = {};
+            ctrl.currentSelected = 0;
+        }
     }
 
     // ================================================================================================================================ //
