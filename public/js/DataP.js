@@ -389,6 +389,7 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
     //          Select Past Data          //
     // ================================== //  
     this.pastDataSelect = (data) => {
+        console.log(JSON.parse(data.data))
         if(ctrl.currentSelected !== data.id){
             ctrl.selectedPastData = JSON.parse(data.data)
             ctrl.currentSelected = data.id

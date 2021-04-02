@@ -23,7 +23,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     }
     // *****
     const determinYScaleTime = (num, t) => {
-        let n = num, arr =[], timeUp = 0, topScale = t === 'h' ? 18 : 15
+        let n = num, arr =[], timeUp = 0, topScale = t === 'h' ? 9 : 15
         while(n > topScale) topScale *=2 // if new number not grater then original num then double it
         if(topScale === 60) timeUp = 1 // for converting 60 m/s to the next time slot
 
@@ -74,7 +74,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
             if(ctx.measureText(yScale[i]).width >= 49 && yScale[i] !== "0:00:00") f= 11
             ctx.font = `bold 12px serif`; 
-            ctx.fillText(yScale[i], 50 , y + (-33.3333 * i));
+            ctx.measureText(yScale[i]).width > 50 ? ctx.fillText(yScale[i], 55 , y + (-33.3333 * i)) : ctx.fillText(yScale[i], 50 , y + (-33.3333 * i))
             
             ctx.beginPath();
             ctx.moveTo(55, y + (-33.3333 * i));
@@ -475,6 +475,8 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
                     if(tP > timePlace){highNum = tN, timePlace = tP} //determing if the pumps highest val is the overall highest val
                     else if (tP === timePlace){ if(tN > highNum) highNum = tN}
 
+                    timeObj.m = parseInt(timeObj.m)
+                    timeObj.s = parseInt(timeObj.s)
                     if(timeObj.m < 10) timeObj.m = "0" + timeObj.m // formating the data to into time for display 
                     if(timeObj.s < 10) timeObj.s = "0" + timeObj.s
                     data.push(`${timeObj.h}:${timeObj.m}:${timeObj.s}`)
@@ -496,6 +498,8 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
                 if(tP > timePlace){highNum = tN, timePlace = tP} //determing if the pumps highest val is the overall highest val
                 else if (tP === timePlace){ if(tN > highNum) highNum = tN}
 
+                timeObj.m = parseInt(timeObj.m)
+                timeObj.s = parseInt(timeObj.s)
                 if(timeObj.m < 10) timeObj.m = "0" + timeObj.m // formating the data to into time for display 
                 if(timeObj.s < 10) timeObj.s = "0" + timeObj.s
                 data.push(`${timeObj.h}:${timeObj.m}:${timeObj.s}`)
@@ -524,7 +528,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             const imgHeight = canvas.height * 210 / canvas.width
             // console.log(imgData)
             doc.addImage(imgData, 0, 0, 210, imgHeight -30)
-            doc.save(`${ctrl.systemDisplayed.name} ${ctrl.currentPumpData.date} Monthly Report ${ctrl.currentPumpData.type}.pdf`)
+            doc.save(`${ctrl.systemDisplayed.name} ${ctrl.currentPumpData.date} ${ctrl.currentPumpData.type} Monthly Report.pdf`)
         })
     }
 
