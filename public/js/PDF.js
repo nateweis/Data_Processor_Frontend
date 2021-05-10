@@ -7,6 +7,11 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
     
     this.backToSelectFile = () => ctrl.showPdfPreview = false
     const displayPdfPages = (pump) => {ctrl.includePath = `partials/previews/${pump}.html`, ctrl.showPdfPreview= true}
+    
+    this.changePage = () => {
+        this.showPdfPreview = true;
+        displayPdfPages("addCustomer");
+    }
 
     // ================================== //
     // Getting the Y Scale for the Graghs //

@@ -16,6 +16,10 @@
 <div ng-controller="PdfController as pdf"> 
 
     <span ng-if="pdf.showPdfPreview === false">
+        <button ng-click="pdf.changePage()">Add Customer</button>
+
+        <br><br>
+
         <select name="system" ng-model="dp.system" ng-change="dp.filterSystemData()">
             <option value="">Select A System</option>
             <option ng-repeat="system in dp.sytemsArr" value="{{system}}">{{system.name}}</option>

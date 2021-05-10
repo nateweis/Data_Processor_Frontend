@@ -10,6 +10,7 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
     this.selectedPastData = {}
     this.pastDataArr = []
     this.sytemsArr = []
+    this.contactEmailList = []
     $scope.pumps = {
         type: "other"
     };
@@ -18,6 +19,7 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
         $http({method:'GET', url: 'http://localhost:3005/system'})
         .then(res => {
             this.sytemsArr = res.data.pulledData;
+            console.log(this.sytemsArr)
             $http({method:'GET', url:'/data'})
             .then(data => ctrl.pastDataArr = data.data.pulledData)
             .catch(err => console.log(err))
@@ -25,7 +27,31 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
         .catch(err => console.log(err))
     }
 
-
+    // ================================== //
+    //       New Customer Submit          //
+    // ================================== // 
+    this.addNewSystem = () => {
+        console.log("name = " + this.newSysName)
+        console.log("company = " + this.newSysCompany)
+        undoSysForm()
+    }
+    this.addNewSystemContact = () => {
+        if(ctrl.newSysEmail.length > 3){
+            this.contactEmailList.push(ctrl.newSysEmail)
+            ctrl.newSysEmail = ""
+        }
+        console.log(ctrl.contactEmailList)
+    }
+    const undoSysForm = () => {
+        ctrl.newSysName = "";
+        ctrl.newSysCompany ="";
+        ctrl.newSysEmail ="";
+        ctrl.contactEmailList = [];
+    }
+    this.removeFromEmailContacts = (str) => {
+        const i = ctrl.contactEmailList.indexOf(str)
+        ctrl.contactEmailList.splice(i, 1)
+    }
 
     // ================================== //
     //          Helper Functions          //
