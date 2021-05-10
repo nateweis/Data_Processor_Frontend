@@ -31,8 +31,25 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
     //       New Customer Submit          //
     // ================================== // 
     this.addNewSystem = () => {
-        console.log("name = " + this.newSysName)
-        console.log("company = " + this.newSysCompany)
+        let topId = 0, arrStr = "{"
+
+        ctrl.sytemsArr.forEach(sys => {if(sys.id > topId) topId = sys.id})
+        topId++
+
+        for(let i =0; i < ctrl.contactEmailList.length; i++){
+            i === 0 ? arrStr += ctrl.contactEmailList[i] : arrStr += `,${ctrl.contactEmailList[i]}`
+        }
+
+        const obj = {
+            id: topId,
+            name: ctrl.newSysName,
+            company: ctrl.newSysCompany,
+            contacts: arrStr + "}",
+            address: ctrl.newSysAddress
+        }
+        $http({method:'POST', url:'/system', data: obj})
+        .then(data => console.log(data))
+        .catch(err => console.log(err))
         undoSysForm()
     }
     this.addNewSystemContact = () => {
@@ -45,6 +62,7 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
     const undoSysForm = () => {
         ctrl.newSysName = "";
         ctrl.newSysCompany ="";
+        ctrl.newSysAddress ="";
         ctrl.newSysEmail ="";
         ctrl.contactEmailList = [];
     }
