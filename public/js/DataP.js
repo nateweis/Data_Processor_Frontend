@@ -334,6 +334,7 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
                 indexHolder.push(obj)
             }
         }
+        console.log(indexHolder)
 
         // *** Using the Array of relevent Variables to make an obj of sleep ****
         const sleepObj = { // an object to hold the number sleep info
@@ -343,38 +344,75 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
             bothRunningCount:0
         } 
         for(let i = 0; i < rows.length; i++){
-            if(parseInt(rows[i][rawKeys[indexHolder[0].index]]) === 1 && parseInt(rows[i][rawKeys[indexHolder[1].index]]) === 1){sleepObj.bothRunningCount +=1}
-            if(parseInt(rows[i][rawKeys[indexHolder[0].index]]) === 0 && parseInt(rows[i][rawKeys[indexHolder[1].index]]) === 0){
-                if(i === 0){sleepObj.sleepCount += 1}
-                else if(parseInt(rows[i -1][rawKeys[indexHolder[0].index]]) !== 0 || parseInt(rows[i -1][rawKeys[indexHolder[1].index]]) !== 0){ //if the previous row is not the same as this row add to the count and time
-                    sleepObj.sleepCount += 1 // adding to the sleep count 
-
-                    const toSecondsAr = [3600, 60, 1]
-                    const currentTime = rows[i]["Time"].split(":") //getting the times for current sleep
-
-                    let nextTime
-                    for(let j = i; j < rows.length; j++){ // getting the time for next time its not is sleep 
-                        if(rows[j] && (parseInt(rows[j][rawKeys[indexHolder[0].index]]) === 1 || parseInt(rows[j][rawKeys[indexHolder[1].index]]) === 1)){
-                            nextTime = rows[j]["Time"].split(":")
-                            break;
+            if(indexHolder[2].type === "VFD 3"){ //sleep mode code if a triplex
+                if(parseInt(rows[i][rawKeys[indexHolder[0].index]]) === 1 && parseInt(rows[i][rawKeys[indexHolder[1].index]]) === 1 && parseInt(rows[i][rawKeys[indexHolder[2].index]]) === 1){sleepObj.bothRunningCount +=1}
+                if(parseInt(rows[i][rawKeys[indexHolder[0].index]]) === 0 && parseInt(rows[i][rawKeys[indexHolder[1].index]]) === 0 && parseInt(rows[i][rawKeys[indexHolder[2].index]]) === 0){
+                    if(i === 0){sleepObj.sleepCount += 1}
+                    else if(parseInt(rows[i -1][rawKeys[indexHolder[0].index]]) !== 0 || parseInt(rows[i -1][rawKeys[indexHolder[1].index]]) !== 0){ //if the previous row is not the same as this row add to the count and time
+                        sleepObj.sleepCount += 1 // adding to the sleep count 
+    
+                        const toSecondsAr = [3600, 60, 1]
+                        const currentTime = rows[i]["Time"].split(":") //getting the times for current sleep
+    
+                        let nextTime
+                        for(let j = i; j < rows.length; j++){ // getting the time for next time its not is sleep 
+                            if(rows[j] && (parseInt(rows[j][rawKeys[indexHolder[0].index]]) === 1 || parseInt(rows[j][rawKeys[indexHolder[1].index]]) === 1 || parseInt(rows[j][rawKeys[indexHolder[2].index]]) === 1)){
+                                nextTime = rows[j]["Time"].split(":")
+                                break;
+                            }
                         }
-                    }
-
-                    if(nextTime){ // converting the time string to seconds and adding to the obj
-                        let num1 = 0, num2 = 0
-
-                        for(let j=0; j < currentTime.length; j++){ //converting the times to seconds 
-                            num1 += parseInt(currentTime[j]) * toSecondsAr[j]
-                            num2 += parseInt(nextTime[j]) * toSecondsAr[j]
+    
+                        if(nextTime){ // converting the time string to seconds and adding to the obj
+                            let num1 = 0, num2 = 0
+    
+                            for(let j=0; j < currentTime.length; j++){ //converting the times to seconds 
+                                num1 += parseInt(currentTime[j]) * toSecondsAr[j]
+                                num2 += parseInt(nextTime[j]) * toSecondsAr[j]
+                            }
+                            
+                            const sum = num2 >= num1 ? num2 - num1 : (86400 - num1) + num2 //subtracting the next time off from time on to see how long it was on for 
+                            sleepObj.sleepTimeRaw += sum //getting the raw time data 
                         }
-                        
-                        const sum = num2 >= num1 ? num2 - num1 : (86400 - num1) + num2 //subtracting the next time off from time on to see how long it was on for 
-                        sleepObj.sleepTimeRaw += sum //getting the raw time data 
+    
+    
                     }
-
-
                 }
             }
+            else{ //sleep mode code if a duplex
+                if(parseInt(rows[i][rawKeys[indexHolder[0].index]]) === 1 && parseInt(rows[i][rawKeys[indexHolder[1].index]]) === 1){sleepObj.bothRunningCount +=1}
+                if(parseInt(rows[i][rawKeys[indexHolder[0].index]]) === 0 && parseInt(rows[i][rawKeys[indexHolder[1].index]]) === 0){
+                    if(i === 0){sleepObj.sleepCount += 1}
+                    else if(parseInt(rows[i -1][rawKeys[indexHolder[0].index]]) !== 0 || parseInt(rows[i -1][rawKeys[indexHolder[1].index]]) !== 0){ //if the previous row is not the same as this row add to the count and time
+                        sleepObj.sleepCount += 1 // adding to the sleep count 
+    
+                        const toSecondsAr = [3600, 60, 1]
+                        const currentTime = rows[i]["Time"].split(":") //getting the times for current sleep
+    
+                        let nextTime
+                        for(let j = i; j < rows.length; j++){ // getting the time for next time its not is sleep 
+                            if(rows[j] && (parseInt(rows[j][rawKeys[indexHolder[0].index]]) === 1 || parseInt(rows[j][rawKeys[indexHolder[1].index]]) === 1)){
+                                nextTime = rows[j]["Time"].split(":")
+                                break;
+                            }
+                        }
+    
+                        if(nextTime){ // converting the time string to seconds and adding to the obj
+                            let num1 = 0, num2 = 0
+    
+                            for(let j=0; j < currentTime.length; j++){ //converting the times to seconds 
+                                num1 += parseInt(currentTime[j]) * toSecondsAr[j]
+                                num2 += parseInt(nextTime[j]) * toSecondsAr[j]
+                            }
+                            
+                            const sum = num2 >= num1 ? num2 - num1 : (86400 - num1) + num2 //subtracting the next time off from time on to see how long it was on for 
+                            sleepObj.sleepTimeRaw += sum //getting the raw time data 
+                        }
+    
+    
+                    }
+                }
+            }
+
         }
 
         sleepObj.sleepTimeTotal = convertFromSecs(sleepObj.sleepTimeRaw)
