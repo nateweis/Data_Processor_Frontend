@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Data Processor</title>
+    <link rel="stylesheet" href="./css/fa-css/all.min.css">
     <link rel="stylesheet" href="./css/style.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
@@ -11,12 +12,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.0/jspdf.umd.min.js"></script>
     
     <script type="module" src="./js/app.js"></script>
+    <script src="https://kit.fontawesome.com/cd26aa8760.js" crossorigin="anonymous"></script>
 </head>
 <body ng-controller="DataController as dp">
 <div ng-controller="PdfController as pdf"> 
 
     <span ng-if="pdf.showPdfPreview === false">
-        <button ng-click="pdf.changePage()">Add Customer</button>
+        <button ng-click='pdf.changePage("addCustomer")'>Add Customer</button>
+        <button ng-if ="dp.filterSystem.customer_id > 0" ng-click='pdf.changePage("updateCustomer")'>Update Customer</button>
 
         <br><br>
 

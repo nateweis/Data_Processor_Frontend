@@ -11,6 +11,7 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
     this.pastDataArr = []
     this.sytemsArr = []
     this.contactEmailList = []
+    this.editSystemObj = {name:false, company: false, address: false, contact: false}
     $scope.pumps = {
         type: "other"
     };
@@ -19,7 +20,7 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
         $http({method:'GET', url: 'http://localhost:3005/system'})
         .then(res => {
             this.sytemsArr = res.data.pulledData;
-            console.log(this.sytemsArr)
+            
             $http({method:'GET', url:'/data'})
             .then(data => ctrl.pastDataArr = data.data.pulledData)
             .catch(err => console.log(err))
@@ -69,6 +70,13 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
     this.removeFromEmailContacts = (str) => {
         const i = ctrl.contactEmailList.indexOf(str)
         ctrl.contactEmailList.splice(i, 1)
+    }
+
+    // ================================== //
+    //          Edit Customer             //
+    // ================================== // 
+    this.editSystem = (key) => {
+        console.log(key)
     }
 
     // ================================== //
@@ -258,6 +266,7 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
                             if(rows[j] && parseInt(rows[j][rawKeys[v.index]]) === 0){
                                 nextTime = rows[j]["Time"].split(":")
                                 nextDate = parseInt(rows[j]["Date"].split(" ")[1]) * 86400
+                                i = j
                                 break;
                             }
                         }
