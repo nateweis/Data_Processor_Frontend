@@ -89,7 +89,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             
         }
         ctx.textAlign = "start"
-
+        console.log(data)
 
         for(let i = 0; i < data.length; i++){ // loop through the bars 
             const h = dataPercentage[i]
@@ -97,9 +97,10 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             let center = (width - t.width)/2; // calculating the center of the width of pixels for the numbers ontop of the bars
             
 
-            if(data.length === 3){
+            if(data.length === 3 || data.length === 6){
                 if(i === 0 || i === 3){
-                    ctrl.pastPumpData.date ? X += 47 : X+= 90
+                    ctrl.pastPumpData.date ? X += 15 : X+= 90
+                    if(i === 3) X += 10
                     if(center < 0 ) X += (center -1); // pushing the bars apart if the text overlaps 
                     ctx.fillStyle = '#5e74b1';
                     ctx.fillRect(X , (canvas.height - h)-80, width, h) //making bar
@@ -141,7 +142,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         }
 
         // Bottom Legend 
-        if(data.length === 3){
+        if(data.length === 3 || data.length === 6){
             ctx.font = 'bold 14px calibri';
             ctx.fillStyle = '#000000'
             ctx.fillText("Pump 1", 85, 229)
