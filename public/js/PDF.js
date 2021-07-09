@@ -99,7 +99,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
             if(data.length === 3){
                 if(i === 0 || i === 3){
-                    ctrl.pastPumpData.date ? X += 47 : X+= 120
+                    ctrl.pastPumpData.date ? X += 47 : X+= 90
                     if(center < 0 ) X += (center -1); // pushing the bars apart if the text overlaps 
                     ctx.fillStyle = '#5e74b1';
                     ctx.fillRect(X , (canvas.height - h)-80, width, h) //making bar
@@ -141,16 +141,36 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         }
 
         // Bottom Legend 
-        ctx.font = 'bold 14px calibri';
-        ctx.fillStyle = "#5e74b1"
-        ctx.fillRect(130, 220, 10, 10)
-        ctx.fillStyle = '#000000'
-        ctx.fillText("Pump 1", 145, 229)
-
-        ctx.fillStyle = "#d97502"
-        ctx.fillRect(200, 220, 10, 10)
-        ctx.fillStyle = '#000000'
-        ctx.fillText("Pump 2", 215, 229)
+        if(data.length === 3){
+            ctx.font = 'bold 14px calibri';
+            ctx.fillStyle = '#000000'
+            ctx.fillText("Pump 1", 85, 229)
+            ctx.fillText("Pump 2", 165, 229)
+            ctx.fillText("Pump 3", 245, 229)
+    
+            ctx.fillStyle = "#5e74b1"
+            ctx.fillRect(70, 220, 10, 10)
+            
+            ctx.fillStyle = "#d97502"
+            ctx.fillRect(150, 220, 10, 10)
+            
+            ctx.fillStyle = "#a8a5a5"
+            ctx.fillRect(230, 220, 10, 10)       
+            
+            ctx.fillStyle = '#000000'
+        }
+        else{
+            ctx.font = 'bold 14px calibri';
+            ctx.fillStyle = "#5e74b1"
+            ctx.fillRect(130, 220, 10, 10)
+            ctx.fillStyle = '#000000'
+            ctx.fillText("Pump 1", 145, 229)
+    
+            ctx.fillStyle = "#d97502"
+            ctx.fillRect(200, 220, 10, 10)
+            ctx.fillStyle = '#000000'
+            ctx.fillText("Pump 2", 215, 229)
+        }
 
         if(ctrl.pastPumpData.date){
             ctx.fillText(ctrl.pastPumpData.date, 104, 190)
