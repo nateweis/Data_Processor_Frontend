@@ -62,7 +62,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         canvas.width = 350;
         canvas.height = 250;
         let data = d, yScale = scale, dataPercentage = dP
-
+        
 
         let width = 25 // bar width 
         let X = 50 // first bar position 
@@ -97,18 +97,38 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             let center = (width - t.width)/2; // calculating the center of the width of pixels for the numbers ontop of the bars
             
 
-            if(i % 2 === 0){
-                ctrl.pastPumpData.date ? X += 50 : X+= 110
-                if(center < -10 ) X += (center -10); // pushing the bars apart if the text overlaps 
-                else if(center < 0 ) X += (center -3); 
-                ctx.fillStyle = '#5e74b1';
-                ctx.fillRect(X , (canvas.height - h)-80, width, h) //making bar
+            if(data.length === 3){
+                if(i === 0 || i === 3){
+                    ctrl.pastPumpData.date ? X += 47 : X+= 120
+                    if(center < 0 ) X += (center -1); // pushing the bars apart if the text overlaps 
+                    ctx.fillStyle = '#5e74b1';
+                    ctx.fillRect(X , (canvas.height - h)-80, width, h) //making bar
+                }
+                else if(i === 1 || i === 4){
+                    if(center < 0 ) X +=( Math.abs(center) + 3); // pushing the bars apart if the text overlaps 
+                    ctx.fillStyle = '#d97502'
+                    ctx.fillRect(X, (canvas.height - h)-80, width, h) //making bar
+                }
+                else{
+                    if(center < 0 ) X +=( Math.abs(center) + 3); // pushing the bars apart if the text overlaps 
+                    ctx.fillStyle = '#a8a5a5'
+                    ctx.fillRect(X, (canvas.height - h)-80, width, h) //making bar
+                }
             }
             else{
-                if(center < -10 ) X +=( Math.abs(center) + 12); // pushing the bars apart if the text overlaps 
-                else if(center < 0 ) X +=( Math.abs(center) + 5);  
-                ctx.fillStyle = '#d97502'
-                ctx.fillRect(X, (canvas.height - h)-80, width, h) //making bar
+                if(i % 2 === 0){
+                    ctrl.pastPumpData.date ? X += 50 : X+= 110
+                    if(center < -10 ) X += (center -10); // pushing the bars apart if the text overlaps 
+                    else if(center < 0 ) X += (center -3); 
+                    ctx.fillStyle = '#5e74b1';
+                    ctx.fillRect(X , (canvas.height - h)-80, width, h) //making bar
+                }
+                else{
+                    if(center < -10 ) X +=( Math.abs(center) + 12); // pushing the bars apart if the text overlaps 
+                    else if(center < 0 ) X +=( Math.abs(center) + 5);  
+                    ctx.fillStyle = '#d97502'
+                    ctx.fillRect(X, (canvas.height - h)-80, width, h) //making bar
+                }
             }
 
 
@@ -194,7 +214,6 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
                 data.push(ctrl.currentPumpData[k])
             }
         })  
-
         const yScale = determinYScale(highNum) // getting the y scale 
 
         for(let i = 0; i < data.length; i++){ dataPercentage.push((data[i] / yScale[yScale.length -1]) * 100) }// turning relevent data into a percentage for the graphs 
@@ -484,7 +503,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
                     timeObj.s = parseInt(timeObj.s)
                     if(timeObj.m < 10) timeObj.m = "0" + timeObj.m // formating the data to into time for display 
                     if(timeObj.s < 10) timeObj.s = "0" + timeObj.s
-                    data.push(`${timeObj.h}:${timeObj.m}:${timeObj.s}`)
+                    timeObj.h > 0 ? data.push(`${timeObj.h}:${timeObj.m}`) : data.push(`${timeObj.m}:${timeObj.s}`);
                 }
             })
         }
@@ -494,7 +513,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             if(ar[ar.length -1] === str){
                 const timeObj = ctrl.currentPumpData[k]
                 rawTime.push(timeObj)
-
+                
                 let tN = 0, tP = 0 //getting the highest val and time of each pump
                 if(timeObj.h > 0) {tN = timeObj.h, tP = 3}
                 else if(timeObj.m > 0) {tN = timeObj.m, tP = 2}
@@ -507,7 +526,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
                 timeObj.s = parseInt(timeObj.s)
                 if(timeObj.m < 10) timeObj.m = "0" + timeObj.m // formating the data to into time for display 
                 if(timeObj.s < 10) timeObj.s = "0" + timeObj.s
-                data.push(`${timeObj.h}:${timeObj.m}:${timeObj.s}`)
+                timeObj.h > 0 ? data.push(`${timeObj.h}:${timeObj.m}`) : data.push(`${timeObj.m}:${timeObj.s}`);
             }
         })
 

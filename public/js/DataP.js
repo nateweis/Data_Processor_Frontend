@@ -334,7 +334,6 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
                 indexHolder.push(obj)
             }
         }
-        console.log(indexHolder)
 
         // *** Using the Array of relevent Variables to make an obj of sleep ****
         const sleepObj = { // an object to hold the number sleep info
@@ -344,7 +343,7 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
             bothRunningCount:0
         } 
         for(let i = 0; i < rows.length; i++){
-            if(indexHolder[2].type === "VFD 3"){ //sleep mode code if a triplex
+            if(indexHolder[2]){ //sleep mode code if a triplex
                 if(parseInt(rows[i][rawKeys[indexHolder[0].index]]) === 1 && parseInt(rows[i][rawKeys[indexHolder[1].index]]) === 1 && parseInt(rows[i][rawKeys[indexHolder[2].index]]) === 1){sleepObj.bothRunningCount +=1}
                 if(parseInt(rows[i][rawKeys[indexHolder[0].index]]) === 0 && parseInt(rows[i][rawKeys[indexHolder[1].index]]) === 0 && parseInt(rows[i][rawKeys[indexHolder[2].index]]) === 0){
                     if(i === 0){sleepObj.sleepCount += 1}
