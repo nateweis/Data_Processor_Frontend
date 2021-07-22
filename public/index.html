@@ -18,31 +18,38 @@
 <div ng-controller="PdfController as pdf"> 
 
     <span ng-if="pdf.showPdfPreview === false">
-        <button ng-click='pdf.changePage("addCustomer")'>Add Customer</button>
-        <button ng-if ="dp.filterSystem.customer_id > 0" ng-click='pdf.changePage("updateCustomer")'>Update Customer</button>
-
-        <br><br>
-
-        <select name="system" ng-model="dp.system" ng-change="dp.filterSystemData()">
-            <option value="">Select A System</option>
-            <option ng-repeat="system in dp.sytemsArr" value="{{system}}">{{system.name}}</option>
-        </select>
-
-        <input type="file" id="fileBtn">
-        <button ng-click="dp.showFile()">Show File</button>
-
-        <br><br>
-        <div ng-if="dp.selectedSystem.name">
-            <h3> {{dp.selectedSystem.company}}/{{dp.selectedSystem.name}}</h3>
-            <h4>Past System Data</h4>
-            <hr>
+        <div class="box-wrapper">
+            <div class="box">
+                <button ng-click='pdf.changePage("addCustomer")' class="custom-btn btn-10" >Add Customer</button>
+                <button ng-if ="dp.filterSystem.customer_id > 0" ng-click='pdf.changePage("updateCustomer")' class="custom-btn btn-10" >Update Customer</button>
+        
+                <br><br>
+        
+                <select name="system" ng-model="dp.system" ng-change="dp.filterSystemData()">
+                    <option value="">Select A System</option>
+                    <option ng-repeat="system in dp.sytemsArr" value="{{system}}">{{system.name}}</option>
+                </select>
+        
+                <input type="file" id="fileBtn">
+                <button ng-click="dp.showFile()" class="custom-btn btn-10">Show File</button>
+            </div>
+    
+    
+            <div class="box">
+                <div ng-if="dp.selectedSystem.name">
+                    <h3> {{dp.selectedSystem.company}}/{{dp.selectedSystem.name}}</h3>
+                    <h4>Past System Data</h4>
+                    <hr>
+                </div>
+        
+                <ul>
+                    <li ng-repeat="pdata in dp.pastDataArr | filter: dp.filterSystem" ng-click="dp.pastDataSelect(pdata)" class="{{pdata.id === dp.currentSelected? 'highlight': ''}}" >
+                       <span class="bullet"></span> {{pdata.made_at.split("T")[0]}} === {{pdata.type}} 
+                    </li>
+                </ul>
+            </div>
         </div>
 
-        <ul>
-            <li ng-repeat="pdata in dp.pastDataArr | filter: dp.filterSystem" ng-click="dp.pastDataSelect(pdata)" class="{{pdata.id === dp.currentSelected? 'highlight': ''}}" >
-                 {{pdata.made_at.split("T")[0]}} === {{pdata.type}} 
-            </li>
-        </ul>
     </span>
 
     <span ng-if="pdf.showPdfPreview">

@@ -7,7 +7,7 @@ const saveData = (req, res) => {
 }
 
 const getData = (req, res) => {
-    db.any('SELECT * FROM data')
+    db.any('SELECT * FROM data ORDER BY made_at DESC')
     .then(data => res.json({message: "The Data Has Been Sent", status: 200, pulledData: data}))
     .catch(err => res.json({message: "ERR on sending the data over ", status: 402, err}))
 }
