@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="./css/fa-css/all.min.css">
     <link rel="stylesheet" href="./css/style.css">
 
+    
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.8/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
@@ -20,10 +21,11 @@
     <span ng-if="pdf.showPdfPreview === false">
         <div class="box-wrapper">
             <div class="box">
-                <button ng-click='pdf.changePage("addCustomer")' class="custom-btn btn-10" >Add Customer</button>
-                <button ng-if ="dp.filterSystem.customer_id > 0" ng-click='pdf.changePage("updateCustomer")' class="custom-btn btn-10" >Update Customer</button>
-        
-                <br><br>
+                <div class="frame" >
+                    <button ng-click='pdf.changePage("addCustomer")' class="btn" >Add Customer</button>
+                    <button ng-if ="dp.filterSystem.customer_id > 0" ng-click='pdf.changePage("updateCustomer")' class="btn" >Update Customer</button>
+                </div>
+
         
                 <select name="system" ng-model="dp.system" ng-change="dp.filterSystemData()">
                     <option value="">Select A System</option>
@@ -31,9 +33,10 @@
                 </select>
         
                 <input type="file" id="fileBtn">
-                <button ng-click="dp.showFile()" class="custom-btn btn-10">Show File</button>
+                <div class="frame"><button ng-click="dp.showFile()" class="btn">Show File</button></div>
             </div>
-    
+            
+           
     
             <div class="box">
                 <div ng-if="dp.selectedSystem.name">
@@ -44,7 +47,7 @@
         
                 <ul>
                     <li ng-repeat="pdata in dp.pastDataArr | filter: dp.filterSystem" ng-click="dp.pastDataSelect(pdata)" class="{{pdata.id === dp.currentSelected? 'highlight': ''}}" >
-                       <span class="bullet"></span> {{pdata.made_at.split("T")[0]}} === {{pdata.type}} 
+                       <span class="bullet"></span> {{pdata.made_at.split("-")[1]}}/{{pdata.made_at.split("-")[2].split("T")[0]}}/{{pdata.made_at.split("-")[0]}} === {{pdata.type}} 
                     </li>
                 </ul>
             </div>
