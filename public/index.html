@@ -27,12 +27,14 @@
                 </div>
 
         
-                <select name="system" ng-model="dp.system" ng-change="dp.filterSystemData()">
-                    <option value="">Select A System</option>
-                    <option ng-repeat="system in dp.sytemsArr" value="{{system}}">{{system.name}}</option>
-                </select>
-        
-                <input type="file" id="fileBtn">
+                <div class="frame">
+                    <select name="system" ng-model="dp.system" ng-change="dp.filterSystemData()">
+                        <option value="">Select A System</option>
+                        <option ng-repeat="system in dp.sytemsArr" value="{{system}}">{{system.name}}</option>
+                    </select>
+            
+                    <input type="file" id="fileBtn">
+                </div>
                 <div class="frame"><button ng-click="dp.showFile()" class="btn">Show File</button></div>
             </div>
             

@@ -34,6 +34,12 @@ h3{
     margin-top: 15px;
     margin-bottom: 15px;
 }
+h3, h4{
+  padding-left: 15px;
+}
+hr{
+  margin-bottom: 2px;
+}
 p{
     margin-top: 10px;
     font-size: 24px;
