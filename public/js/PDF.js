@@ -89,7 +89,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             
         }
         ctx.textAlign = "start"
-        console.log(data)
+        
 
         for(let i = 0; i < data.length; i++){ // loop through the bars 
             const h = dataPercentage[i]
@@ -205,7 +205,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
             dataPercentage.push((holder / calculatedLastYscale) * 100)
         })
         
-        drawGraph('avrgrunchart', yScale, time.data, dataPercentage, "Average Runtime")
+        drawGraph('avrgrunchart', yScale, time.data, dataPercentage, "Average Cycle Time")
     }
 
     // ******************** END ****************************
@@ -495,7 +495,7 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
         ctrl.systemDisplayed = dataObj[1]
 
         let strVer = JSON.stringify(ctrl.currentPumpData) //use stringify so itll save in the database
-        console.log(JSON.parse(strVer)) //use parse to convert back to obj to use 
+        // console.log(JSON.parse(strVer)) //use parse to convert back to obj to use 
     }
 
     // ================================== //
@@ -579,6 +579,5 @@ export const pdf = ['$http', '$rootScope', '$timeout', function($http, $rootScop
 
 
     // ******************* END *****************************
-    
 
 }]

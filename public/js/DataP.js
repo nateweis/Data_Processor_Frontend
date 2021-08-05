@@ -58,7 +58,7 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
             this.contactEmailList.push(ctrl.newSysEmail)
             ctrl.newSysEmail = ""
         }
-        console.log(ctrl.contactEmailList)
+        
     }
     const undoSysForm = () => {
         ctrl.newSysName = "";
@@ -82,6 +82,20 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
     // ================================== //
     //          Helper Functions          //
     // ================================== // 
+    const amountofDays = (excel) => {
+        let firstDay = '', lastDate = '', startingIndex = 0;
+        for(let i = 0; i < excel.length; i++){
+            const k = Object.keys(excel[i])
+            if(k.length > 5){
+                startingIndex = i + 1;
+                break;
+            }
+        }
+        firstDay = parseInt(excel[startingIndex]['Date'].split(" ")[1]);
+        lastDate = parseInt(excel[excel.length- 1]['Date'].split(" ")[1]);
+        
+        return lastDate - firstDay
+    }
     // Converst secondst to time in an obj
     const convertFromSecs = (time) => {
         let sec = 0, min= 0, hr = 0
@@ -128,10 +142,13 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
         ctrl.processAlarms(rows)
         ctrl.processRuntimes(rows) 
         
+        
         // console.log(ctrl.finalProcessedObject)
+        ctrl.finalProcessedObject.amountOfDaysRunning = amountofDays(rows)
         ctrl.finalProcessedObject.date = dateArr[0] + " " + dateArr[2]
         ctrl.finalProcessedObject = {...ctrl.finalProcessedObject, ...$scope.pumps}
         DataProcessingService.activateMakePdf([ctrl.finalProcessedObject, ctrl.selectedSystem, ctrl.selectedPastData])
+        console.log(ctrl.finalProcessedObject)
     }
 
     // ================================== //
