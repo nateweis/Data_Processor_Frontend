@@ -8,6 +8,7 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
     this.finalProcessedObject = {}
     this.selectedSystem = {}
     this.selectedPastData = {}
+    this.allPastData = []
     this.pastDataArr = []
     this.sytemsArr = []
     this.contactEmailList = []
@@ -136,6 +137,9 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
         else if(sk.indexOf("Low Level Alarm") > 0) $scope.pumps.type = "TankFill"
         else $scope.pumps.type = "Sewer"
 
+        let tempFilterArr = [] // get all the past data from that location of that system type
+        ctrl.allPastData.forEach(sys => {if($scope.pumps.type === sys.type) tempFilterArr.push(sys)})
+
         
         if($scope.pumps.type === "Booster") ctrl.processSleep(rows)
         if($scope.pumps.type === "Condensate") ctrl.processTemp(rows)
@@ -147,7 +151,7 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
         ctrl.finalProcessedObject.amountOfDaysRunning = amountofDays(rows)
         ctrl.finalProcessedObject.date = dateArr[0] + " " + dateArr[2]
         ctrl.finalProcessedObject = {...ctrl.finalProcessedObject, ...$scope.pumps}
-        DataProcessingService.activateMakePdf([ctrl.finalProcessedObject, ctrl.selectedSystem, ctrl.selectedPastData])
+        DataProcessingService.activateMakePdf([ctrl.finalProcessedObject, ctrl.selectedSystem, ctrl.selectedPastData, tempFilterArr])
         console.log(ctrl.finalProcessedObject)
     }
 
@@ -161,6 +165,13 @@ export const dp = ['$http','$window', '$scope', 'DataProcessingService', functio
             const ssys = JSON.parse(ctrl.system);
             ctrl.selectedSystem = ssys;
             ctrl.filterSystem.customer_id = ctrl.selectedSystem.id;
+
+            let temp = []
+            ctrl.pastDataArr.forEach(sys => {
+                if(ctrl.filterSystem.customer_id === sys.customer_id)temp.push(sys)
+            })
+            ctrl.allPastData = temp
+
         }
     }
 
